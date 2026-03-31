@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>William Rivera Jr — Data Analyst</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Epilogue:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #080808;
+    --bg-2: #111111;
+    --bg-3: #1a1a1a;
+    --text: #f0ede8;
+    --text-muted: #888880;
+    --accent: #e8ff47;
+    --accent-dim: #b8cc2a;
+    --border: rgba(240,237,232,0.08);
+    --border-hover: rgba(240,237,232,0.2);
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-body: 'Epilogue', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.7;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 4rem;
+    background: rgba(8,8,8,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+
+  .nav-logo span { color: var(--accent); }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .nav-links a {
+    color: var(--text-muted);
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--text); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 4rem 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-tag {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 2rem;
+  }
+
+  .hero-headline {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 8vw, 8rem);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    max-width: 900px;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-headline em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 520px;
+    line-height: 1.75;
+    margin-bottom: 3rem;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: 1px solid var(--border-hover);
+    border-radius: 2px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #080808;
+    border-color: var(--accent);
+    font-weight: 500;
+  }
+
+  .btn-primary:hover { background: var(--accent-dim); border-color: var(--accent-dim); }
+
+  .btn-secondary { background: transparent; color: var(--text); }
+  .btn-secondary:hover { background: var(--bg-3); }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 2rem;
+    right: 4rem;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hero-scroll::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--text-muted);
+  }
+
+  .hero-bg-text {
+    position: absolute;
+    top: 50%;
+    right: -2rem;
+    transform: translateY(-50%);
+    font-family: var(--font-display);
+    font-size: clamp(8rem, 20vw, 22rem);
+    line-height: 1;
+    color: rgba(240,237,232,0.02);
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  /* ── SECTION SHARED ── */
+  section { padding: 7rem 4rem; }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .section-label::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    line-height: 1;
+    letter-spacing: 0.02em;
+    margin-bottom: 3rem;
+  }
+
+  /* ── ABOUT ── */
+  #about { border-top: 1px solid var(--border); }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: start;
+    max-width: 1200px;
+  }
+
+  .about-text p {
+    color: var(--text-muted);
+    font-size: 16px;
+    margin-bottom: 1.5rem;
+    line-height: 1.85;
+  }
+
+  .about-text p strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .about-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .stat {
+    background: var(--bg);
+    padding: 2rem;
+  }
+
+  .stat-number {
+    font-family: var(--font-display);
+    font-size: 3.5rem;
+    line-height: 1;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* ── SKILLS ── */
+  #skills {
+    background: var(--bg-2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    max-width: 1200px;
+    margin-top: 2rem;
+  }
+
+  .skill-group {
+    background: var(--bg-2);
+    padding: 2.5rem;
+  }
+
+  .skill-group-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .skill-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .skill-list li {
+    font-size: 14px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .skill-list li::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── PROJECTS ── */
+  #projects { border-top: 1px solid var(--border); }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    max-width: 1200px;
+  }
+
+  .project-card {
+    background: var(--bg);
+    padding: 2.5rem;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-card:hover { background: var(--bg-3); }
+
+  .project-card.featured {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .project-number {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .project-title {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--border-hover);
+    color: var(--text-muted);
+    border-radius: 1px;
+  }
+
+  .project-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+  }
+
+  .project-findings {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .finding {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    font-size: 13px;
+  }
+
+  .finding-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    padding-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .finding-text { color: var(--text-muted); }
+  .finding-text strong { color: var(--text); font-weight: 500; }
+
+  .project-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-top: 1.5rem;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+
+  .project-link:hover { border-color: var(--accent); }
+
+  .project-link-arrow { transition: transform 0.2s; }
+  .project-link:hover .project-link-arrow { transform: translateX(4px); }
+
+  .coming-soon {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .coming-soon-badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border: 1px solid var(--border-hover);
+    padding: 0.25rem 0.6rem;
+    border-radius: 1px;
+    display: inline-block;
+    margin-top: 1rem;
+  }
+
+  /* ── EXPERIENCE ── */
+  #experience {
+    background: var(--bg-2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .experience-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: 900px;
+  }
+
+  .exp-item {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 3rem;
+    padding: 2.5rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .exp-item:last-child { border-bottom: none; }
+
+  .exp-meta { padding-top: 4px; }
+
+  .exp-period {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .exp-company {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+
+  .exp-role {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  .exp-bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .exp-bullets li {
+    font-size: 14px;
+    color: var(--text-muted);
+    display: flex;
+    gap: 0.75rem;
+    line-height: 1.7;
+  }
+
+  .exp-bullets li::before {
+    content: '—';
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* ── CONTACT ── */
+  #contact { border-top: 1px solid var(--border); }
+
+  .contact-inner {
+    max-width: 700px;
+  }
+
+  .contact-headline {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    line-height: 1;
+    letter-spacing: 0.02em;
+    margin-bottom: 1.5rem;
+  }
+
+  .contact-sub {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-bottom: 3rem;
+    line-height: 1.8;
+  }
+
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border);
+  }
+
+  .contact-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s;
+  }
+
+  .contact-link:last-child { border-bottom: none; }
+  .contact-link:hover { background: var(--bg-3); }
+
+  .contact-link-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .contact-link-value {
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .contact-link-arrow { color: var(--accent); }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 2rem 4rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-copy {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+  }
+
+  .footer-copy span { color: var(--accent); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-tag { animation: fadeUp 0.6s ease both; }
+  .hero-headline { animation: fadeUp 0.6s 0.1s ease both; }
+  .hero-sub { animation: fadeUp 0.6s 0.2s ease both; }
+  .hero-cta { animation: fadeUp 0.6s 0.3s ease both; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 1.25rem 2rem; }
+    nav .nav-links { display: none; }
+    section { padding: 5rem 2rem; }
+    #hero { padding: 0 2rem 4rem; }
+    .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .project-card.featured { grid-column: auto; grid-template-columns: 1fr; }
+    .exp-item { grid-template-columns: 1fr; gap: 0.5rem; }
+    footer { padding: 2rem; flex-direction: column; gap: 1rem; text-align: center; }
+  }
+
+  /* ── CERTIFICATIONS ── */
+  #certifications {
+    border-top: 1px solid var(--border);
+  }
+
+  .cert-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 2.5rem;
+    border: 1px solid var(--border);
+    width: fit-content;
+  }
+
+  .cert-tab {
+    padding: 0.75rem 2rem;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--text-muted);
+    border: none;
+    border-right: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .cert-tab:last-child { border-right: none; }
+
+  .cert-tab.active {
+    background: var(--accent);
+    color: #080808;
+    font-weight: 500;
+  }
+
+  .cert-tab:not(.active):hover {
+    background: var(--bg-3);
+    color: var(--text);
+  }
+
+  .cert-panel { display: none; }
+  .cert-panel.active { display: block; }
+
+  .cert-stats {
+    display: flex;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    width: fit-content;
+    margin-bottom: 2rem;
+  }
+
+  .cert-stat {
+    background: var(--bg);
+    padding: 1.25rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .cert-stat-num {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    line-height: 1;
+    color: var(--accent);
+  }
+
+  .cert-stat-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .cert-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    max-width: 1200px;
+  }
+
+  .cert-card {
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    transition: background 0.2s;
+  }
+
+  .cert-card:hover { background: var(--bg-3); }
+
+  .cert-card img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    display: block;
+    border-bottom: 1px solid var(--border);
+    opacity: 0.9;
+    transition: opacity 0.2s;
+  }
+
+  .cert-card:hover img { opacity: 1; }
+
+  .cert-info {
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+  }
+
+  .cert-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .cert-date {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .cert-tag {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-top: 0.25rem;
+  }
+
+  .cert-inprog {
+    opacity: 0.5;
+    border: 1px dashed var(--border-hover);
+  }
+
+  @media (max-width: 900px) {
+    .cert-grid { grid-template-columns: repeat(2, 1fr); }
+    .cert-tabs { width: 100%; }
+    .cert-tab { flex: 1; }
+  }
+
+  /* ── CERTIFICATIONS ── */
+  #certifications { border-top: 1px solid var(--border); }
+
+  .cert-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 2.5rem;
+    border: 1px solid var(--border);
+    width: fit-content;
+  }
+
+  .cert-tab {
+    padding: 0.75rem 2rem;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--text-muted);
+    border: none;
+    border-right: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .cert-tab:last-child { border-right: none; }
+  .cert-tab.active { background: var(--accent); color: #080808; font-weight: 500; }
+  .cert-tab:not(.active):hover { background: var(--bg-3); color: var(--text); }
+
+  .cert-panel { display: none; }
+  .cert-panel.active { display: block; }
+
+  .cert-stats {
+    display: flex;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    width: fit-content;
+    margin-bottom: 2rem;
+  }
+
+  .cert-stat {
+    background: var(--bg);
+    padding: 1.25rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .cert-stat-num {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    line-height: 1;
+    color: var(--accent);
+  }
+
+  .cert-stat-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .cert-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    max-width: 1200px;
+  }
+
+  .cert-card {
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    transition: background 0.2s;
+  }
+
+  .cert-card:hover { background: var(--bg-3); }
+
+  .cert-card img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    display: block;
+    border-bottom: 1px solid var(--border);
+    opacity: 0.9;
+    transition: opacity 0.2s;
+  }
+
+  .cert-card:hover img { opacity: 1; }
+
+  .cert-info {
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+  }
+
+  .cert-name { font-size: 12px; font-weight: 500; color: var(--text); line-height: 1.4; }
+  .cert-date { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); }
+  .cert-tag { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-top: 0.25rem; }
+  .cert-inprog { opacity: 0.5; }
+
+  @media (max-width: 900px) {
+    .cert-grid { grid-template-columns: repeat(2, 1fr); }
+    .cert-tabs { width: 100%; }
+    .cert-tab { flex: 1; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">WR<span>.</span>JR</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#certifications">Certifications</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-text">DATA</div>
+  <div class="hero-tag">William Rivera Jr &mdash; Data Analyst</div>
+  <h1 class="hero-headline">
+    Most analysts<br>
+    know the<br>
+    dashboard.<br>
+    <em>I know what<br>
+    the data is<br>
+    measuring.</em>
+  </h1>
+  <p class="hero-sub">
+    15 years at the frontlines of operations that generate the data. Now I build the systems that make sense of it — supply chain analytics, KPI dashboards, and the kind of insight that actually changes decisions.
+  </p>
+  <div class="hero-cta">
+    <a href="#projects" class="btn btn-primary">View Projects</a>
+    <a href="#contact" class="btn btn-secondary">Get in Touch</a>
+  </div>
+  <div class="hero-scroll">Scroll</div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label">About</div>
+  <div class="about-grid">
+    <div class="about-text">
+      <p>
+        I spent <strong>15 years running operations</strong> — field inventory management for a medical device division, quality control for a high-volume distribution network. Numbers weren't abstract to me. A wrong count meant a surgeon didn't have the right implant.
+      </p>
+      <p>
+        That's the lens I bring to data. I'm not just someone who learned SQL and Power BI in a bootcamp. I understand what the data is actually measuring, because I lived inside the operations that generated it.
+      </p>
+      <p>
+        Now I build analytical systems that surface the kind of problems that hide in plain sight — stockout risks, fulfillment failures, demand patterns that nobody caught until it was too late. <strong>Operations instinct plus analytical tools.</strong> That's the edge.
+      </p>
+    </div>
+    <div>
+      <div class="about-stats">
+        <div class="stat">
+          <div class="stat-number">15</div>
+          <div class="stat-label">Years in Operations</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">98%</div>
+          <div class="stat-label">Inventory Accuracy Maintained</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">$60K</div>
+          <div class="stat-label">Cost Exposure Surfaced</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">6</div>
+          <div class="stat-label">Analytical Tools</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label">Skills</div>
+  <div class="section-title">Tools &amp; Technologies</div>
+  <div class="skills-grid">
+    <div class="skill-group">
+      <div class="skill-group-title">Data &amp; Analytics</div>
+      <ul class="skill-list">
+        <li>PostgreSQL &amp; DBeaver</li>
+        <li>Power BI Dashboards</li>
+        <li>Excel &amp; PivotTables</li>
+        <li>Tableau</li>
+        <li>Python (in progress)</li>
+        <li>ETL &amp; Data Transformation</li>
+      </ul>
+    </div>
+    <div class="skill-group">
+      <div class="skill-group-title">Operations &amp; Supply Chain</div>
+      <ul class="skill-list">
+        <li>SAP (Advanced)</li>
+        <li>Field Inventory Management</li>
+        <li>PAR Level Optimization</li>
+        <li>Demand Forecasting</li>
+        <li>Cycle Counting &amp; Auditing</li>
+        <li>KPI Dashboard Development</li>
+      </ul>
+    </div>
+    <div class="skill-group">
+      <div class="skill-group-title">Methods &amp; Frameworks</div>
+      <ul class="skill-list">
+        <li>Root Cause Analysis</li>
+        <li>Six Sigma Foundations</li>
+        <li>Lean Operations</li>
+        <li>Predictive Modeling</li>
+        <li>Cross-functional Collaboration</li>
+        <li>Docker &amp; pgAdmin</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-label">Projects</div>
+  <div class="section-title">Selected Work</div>
+  <div class="projects-grid">
+
+    <!-- Featured Project -->
+    <div class="project-card featured">
+      <div>
+        <div class="project-number">01 &mdash; Featured</div>
+        <h3 class="project-title">Medical Supply Chain Audit Simulator</h3>
+        <div class="project-tags">
+          <span class="tag">PostgreSQL</span>
+          <span class="tag">DBeaver</span>
+          <span class="tag">Docker</span>
+          <span class="tag">pgAdmin</span>
+        </div>
+        <p class="project-desc">
+          A 7-table relational database simulating a regional medical supply chain across six Connecticut clinical sites. Built from scratch to demonstrate real-world inventory auditing, shipment discrepancy detection, PAR-level analysis, and cost exposure reporting.
+        </p>
+        <a href="https://github.com/wriveraj/medical-supply-audit" target="_blank" class="project-link">
+          View on GitHub <span class="project-link-arrow">&rarr;</span>
+        </a>
+      </div>
+      <div class="project-findings">
+        <div class="finding">
+          <span class="finding-num">01</span>
+          <span class="finding-text"><strong>$59,752</strong> in reorder cost exposure identified across three underperforming sites</span>
+        </div>
+        <div class="finding">
+          <span class="finding-num">02</span>
+          <span class="finding-text"><strong>33.3% fulfillment rate</strong> at Bridgeport Community Clinic — only 1 in 3 shipments arrived correctly</span>
+        </div>
+        <div class="finding">
+          <span class="finding-num">03</span>
+          <span class="finding-text"><strong>Data integrity flag</strong> — a mislabeled shipment note masked a shortage that would have delayed reorder</span>
+        </div>
+        <div class="finding">
+          <span class="finding-num">04</span>
+          <span class="finding-text"><strong>N95 Respirators</strong> identified as highest-cost reorder item at $3,600/site, critically low at all problem locations</span>
+        </div>
+        <div class="finding">
+          <span class="finding-num">05</span>
+          <span class="finding-text"><strong>Waterbury Urgent Care</strong> had the highest gap cost at $7,784 — furthest below PAR across 15 products</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project 2 -->
+    <div class="project-card coming-soon">
+      <div class="project-number">02</div>
+      <h3 class="project-title">Field Inventory KPI Dashboard</h3>
+      <div class="project-tags">
+        <span class="tag">Power BI</span>
+        <span class="tag">DAX</span>
+        <span class="tag">Healthcare Data</span>
+      </div>
+      <p class="project-desc">
+        A Power BI dashboard tracking fulfillment rates, variance trends, and PAR-level performance across a simulated medical supply network.
+      </p>
+      <div class="coming-soon-badge">Coming Soon</div>
+    </div>
+
+    <!-- Project 3 -->
+    <div class="project-card coming-soon">
+      <div class="project-number">03</div>
+      <h3 class="project-title">Distribution Center Throughput Analysis</h3>
+      <div class="project-tags">
+        <span class="tag">Excel</span>
+        <span class="tag">PivotTables</span>
+        <span class="tag">VBA</span>
+      </div>
+      <p class="project-desc">
+        A PivotTable-driven analysis of a public logistics dataset identifying bottlenecks, peak demand windows, and throughput inefficiencies.
+      </p>
+      <div class="coming-soon-badge">Coming Soon</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label">Experience</div>
+  <div class="section-title">Where I've Worked</div>
+  <div class="experience-list">
+
+    <div class="exp-item">
+      <div class="exp-meta">
+        <div class="exp-period">May 2020 &mdash; Present</div>
+        <div class="exp-company">Zimmer Biomet</div>
+      </div>
+      <div>
+        <div class="exp-role">Surgery Coordinator / Field Inventory Control Specialist</div>
+        <ul class="exp-bullets">
+          <li>Managed end-to-end field inventory lifecycle for surgical implants, ensuring 100% case readiness 3–5 business days ahead of procedures</li>
+          <li>Designed SAP-integrated KPI dashboards tracking inventory accuracy, order fulfillment, and demand variance across the North Atlantic division</li>
+          <li>Maintained inventory accuracy above 98% through comprehensive cycle counts and root cause analysis on recurring variances</li>
+          <li>Extracted and analyzed large operational datasets using SAP, Excel, and Power BI to produce actionable reports for leadership</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-meta">
+        <div class="exp-period">Oct 2013 &mdash; Mar 2020</div>
+        <div class="exp-company">Dollar Tree Distribution</div>
+      </div>
+      <div>
+        <div class="exp-role">Quality Control Lead</div>
+        <ul class="exp-bullets">
+          <li>Led quality control operations for high-volume distribution centers, overseeing 15+ associates and inbound/outbound inventory accuracy</li>
+          <li>Built and maintained a warehouse database to track inventory movement data, enabling trend analysis and proactive bottleneck identification</li>
+          <li>Leveraged data and analytics to reduce shipment error rates and improve throughput metrics across the facility</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+  <!-- CERTIFICATIONS -->
+  <section id="certifications">
+    <div class="section-label">Certifications</div>
+    <div class="section-title">Professional Development</div>
+
+    <div class="cert-tabs">
+      <button class="cert-tab active" data-tab="linkedin" onclick="switchTab('linkedin')">LinkedIn Learning</button>
+      <button class="cert-tab" data-tab="coursiv" onclick="switchTab('coursiv')">Coursiv</button>
+    </div>
+
+    <div id="tab-linkedin" class="cert-panel active">
+      <div class="cert-stats">
+        <div class="cert-stat"><span class="cert-stat-num">14</span><span class="cert-stat-label">Completed</span></div>
+        <div class="cert-stat"><span class="cert-stat-num">1</span><span class="cert-stat-label">In Progress</span></div>
+        <div class="cert-stat"><span class="cert-stat-num">2026</span><span class="cert-stat-label">Latest Year</span></div>
+      </div>
+      <div class="cert-grid">
+        <div class="cert-card"><img src="certs/ll/postgresql_intro.jpg" alt="Introduction to PostgreSQL"><div class="cert-info"><div class="cert-name">Introduction to PostgreSQL</div><div class="cert-date">Aug 2025</div><div class="cert-tag">Data</div></div></div>
+        <div class="cert-card"><img src="certs/ll/postgresql_essential.jpg" alt="PostgreSQL Essential Training"><div class="cert-info"><div class="cert-name">PostgreSQL Essential Training</div><div class="cert-date">2025</div><div class="cert-tag">Data</div></div></div>
+        <div class="cert-card"><img src="certs/ll/dbeaver.jpg" alt="DBeaver Essential Training"><div class="cert-info"><div class="cert-name">DBeaver Essential Training</div><div class="cert-date">Dec 2025</div><div class="cert-tag">Data</div></div></div>
+        <div class="cert-card"><img src="certs/ll/powerbi_essential.jpg" alt="Power BI Essential Training"><div class="cert-info"><div class="cert-name">Power BI Essential Training</div><div class="cert-date">Jan 2025</div><div class="cert-tag">Data</div></div></div>
+        <div class="cert-card"><img src="certs/ll/powerbi_dashboards.jpg" alt="Power BI: Dashboards"><div class="cert-info"><div class="cert-name">Power BI: Dashboards</div><div class="cert-date">Mar 2025</div><div class="cert-tag">Data</div></div></div>
+        <div class="cert-card"><img src="certs/ll/excel_essential.jpg" alt="Excel Essential Training"><div class="cert-info"><div class="cert-name">Excel Essential Training</div><div class="cert-date">Jul 2024</div><div class="cert-tag">Data</div></div></div>
+        <div class="cert-card"><img src="certs/ll/excel_pivottables.jpg" alt="Excel: PivotTables"><div class="cert-info"><div class="cert-name">Excel: PivotTables</div><div class="cert-date">Sep 2024</div><div class="cert-tag">Data</div></div></div>
+        <div class="cert-card"><img src="certs/ll/excel_powerpivot.jpg" alt="Excel: Power Pivot"><div class="cert-info"><div class="cert-name">Excel: Power Pivot</div><div class="cert-date">Oct 2024</div><div class="cert-tag">Data</div></div></div>
+        <div class="cert-card"><img src="certs/ll/excel_online.jpg" alt="Learning Excel Online"><div class="cert-info"><div class="cert-name">Learning Excel Online</div><div class="cert-date">Sep 2024</div><div class="cert-tag">Data</div></div></div>
+        <div class="cert-card"><img src="certs/ll/ai_ml.jpg" alt="AI Foundations: Machine Learning"><div class="cert-info"><div class="cert-name">AI Foundations: Machine Learning</div><div class="cert-date">Feb 2026</div><div class="cert-tag">AI</div></div></div>
+        <div class="cert-card"><img src="certs/ll/ai_nn.jpg" alt="AI Foundations: Neural Networks"><div class="cert-info"><div class="cert-name">AI Foundations: Neural Networks</div><div class="cert-date">Feb 2026</div><div class="cert-tag">AI</div></div></div>
+        <div class="cert-card"><img src="certs/ll/prompt_eng.jpg" alt="Prompt Engineering &amp; AI Agents"><div class="cert-info"><div class="cert-name">Prompt Engineering &amp; AI Agents</div><div class="cert-date">Jan 2026</div><div class="cert-tag">AI</div></div></div>
+        <div class="cert-card"><img src="certs/ll/ops_excellence.jpg" alt="Operational Excellence Foundations"><div class="cert-info"><div class="cert-name">Operational Excellence Foundations</div><div class="cert-date">May 2025</div><div class="cert-tag">Ops</div></div></div>
+        <div class="cert-card"><img src="certs/ll/six_sigma.jpg" alt="Six Sigma Foundations"><div class="cert-info"><div class="cert-name">Six Sigma Foundations</div><div class="cert-date">Apr 2025</div><div class="cert-tag">Ops</div></div></div>
+        <div class="cert-card"><img src="certs/ll/six_sigma_wb.jpg" alt="Six Sigma: White Belt"><div class="cert-info"><div class="cert-name">Six Sigma: White Belt</div><div class="cert-date">Apr 2025</div><div class="cert-tag">Ops</div></div></div>
+        <div class="cert-card cert-inprog"><div class="cert-info" style="justify-content:center;text-align:center;padding:1.5rem"><div class="cert-name" style="font-style:italic;color:var(--text-muted)">Python Data Structures &amp; Algorithms</div><div class="cert-date">In Progress &mdash; 2026</div></div></div>
+      </div>
+    </div>
+
+    <div id="tab-coursiv" class="cert-panel">
+      <div class="cert-stats">
+        <div class="cert-stat"><span class="cert-stat-num">6</span><span class="cert-stat-label">Completed</span></div>
+        <div class="cert-stat"><span class="cert-stat-num">27h</span><span class="cert-stat-label">Total Hours</span></div>
+        <div class="cert-stat"><span class="cert-stat-num">2026</span><span class="cert-stat-label">Latest Year</span></div>
+      </div>
+      <div class="cert-grid">
+        <div class="cert-card"><img src="certs/coursiv/coursiv_claude.jpg" alt="Master of Claude"><div class="cert-info"><div class="cert-name">Master of Claude</div><div class="cert-date">Feb 2026 &bull; 5 hrs</div><div class="cert-tag">AI</div></div></div>
+        <div class="cert-card"><img src="certs/coursiv/coursiv_chatgpt.jpg" alt="Master of ChatGPT"><div class="cert-info"><div class="cert-name">Master of ChatGPT</div><div class="cert-date">Mar 2026 &bull; 6 hrs</div><div class="cert-tag">AI</div></div></div>
+        <div class="cert-card"><img src="certs/coursiv/coursiv_gemini.jpg" alt="Master of Gemini"><div class="cert-info"><div class="cert-name">Master of Gemini</div><div class="cert-date">Mar 2026 &bull; 4 hrs</div><div class="cert-tag">AI</div></div></div>
+        <div class="cert-card"><img src="certs/coursiv/coursiv_midjourney.jpg" alt="Master of MidJourney"><div class="cert-info"><div class="cert-name">Master of MidJourney</div><div class="cert-date">Feb 2026 &bull; 6 hrs</div><div class="cert-tag">AI</div></div></div>
+        <div class="cert-card"><img src="certs/coursiv/coursiv_ai_pm.jpg" alt="AI Essentials for Project Managers"><div class="cert-info"><div class="cert-name">AI Essentials for Project Managers</div><div class="cert-date">Mar 2026 &bull; 3 hrs</div><div class="cert-tag">AI</div></div></div>
+        <div class="cert-card"><img src="certs/coursiv/coursiv_productivity.jpg" alt="Turbocharge Your Productivity with AI"><div class="cert-info"><div class="cert-name">Turbocharge Your Productivity with AI</div><div class="cert-date">Mar 2026 &bull; 3 hrs</div><div class="cert-tag">AI</div></div></div>
+      </div>
+    </div>
+  </section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="section-label">Contact</div>
+    <h2 class="contact-headline">Let's Talk</h2>
+    <p class="contact-sub">
+      I'm actively looking for Data Analyst roles where operational depth and analytical skill both matter. If that sounds like your team, I'd like to hear from you.
+    </p>
+    <div class="contact-links">
+      <a href="/cdn-cgi/l/email-protection#d587bca3b0a7b4a2ede195baa0a1b9bababefbb6bab8" class="contact-link">
+        <span class="contact-link-label">Email</span>
+        <span class="contact-link-value"><span class="__cf_email__" data-cfemail="44162d32213625337c70042b3130282b2b2f6a272b29">[email&#160;protected]</span> <span class="contact-link-arrow">&rarr;</span></span>
+      </a>
+      <a href="https://linkedin.com/in/william-rivera-966230309" target="_blank" class="contact-link">
+        <span class="contact-link-label">LinkedIn</span>
+        <span class="contact-link-value">william-rivera-966230309 <span class="contact-link-arrow">&rarr;</span></span>
+      </a>
+      <a href="https://github.com/wriveraj" target="_blank" class="contact-link">
+        <span class="contact-link-label">GitHub</span>
+        <span class="contact-link-value">github.com/wriveraj <span class="contact-link-arrow">&rarr;</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-copy">William Rivera J
