@@ -1196,4 +1196,36 @@
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-copy">William Rivera J<script>function switchTab(t){document.querySelectorAll(".cert-panel").forEach(function(p){p.classList.remove("active")});document.querySelectorAll(".cert-tab").forEach(function(b){b.classList.remove("active")});document.getElementById("tab-"+t).classList.add("active");document.querySelectorAll(".cert-tab").forEach(function(b){if(b.getAttribute("data-tab")===t){b.classList.add("active")}})}</script>
+  <div class="footer-copy">William Rivera J<script>function switchTab(t){setTimeout(function(){
+  document.querySelectorAll(".cert-card img").forEach(function(i){
+    i.style.cursor="zoom-in";
+    i.onclick=function(){
+      var d=document.createElement("div");
+      d.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.93);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:zoom-out";
+      d.onclick=function(){document.body.removeChild(d)};
+      var img=document.createElement("img");
+      img.src=this.src;
+      img.style.cssText="max-width:88%;max-height:88%;border-radius:4px;box-shadow:0 20px 60px rgba(0,0,0,0.8)";
+      img.onclick=function(e){e.stopPropagation()};
+      d.appendChild(img);
+      document.body.appendChild(d);
+    };
+  });
+},800);
+setTimeout(function(){
+  document.querySelectorAll(".cert-card img").forEach(function(i){
+    i.style.cursor="zoom-in";
+    i.onclick=function(){
+      var d=document.createElement("div");
+      d.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.93);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:zoom-out";
+      d.onclick=function(){document.body.removeChild(d)};
+      var img=document.createElement("img");
+      img.src=this.src;
+      img.style.cssText="max-width:88%;max-height:88%;border-radius:4px;box-shadow:0 20px 60px rgba(0,0,0,0.8)";
+      img.onclick=function(e){e.stopPropagation()};
+      d.appendChild(img);
+      document.body.appendChild(d);
+    };
+  });
+},800);
+document.querySelectorAll(".cert-panel").forEach(function(p){p.classList.remove("active")});document.querySelectorAll(".cert-tab").forEach(function(b){b.classList.remove("active")});document.getElementById("tab-"+t).classList.add("active");document.querySelectorAll(".cert-tab").forEach(function(b){if(b.getAttribute("data-tab")===t){b.classList.add("active")}})}</script>
