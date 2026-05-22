@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rivera Deal Tracker</title>
+
+<!--
+  ============================================================
+  SETUP — 5 minutes, no Google account needed
+  ============================================================
+  1. Go to https://jsonbin.io and click "Sign Up"
+     → sign up with any email address
+
+  2. Once logged in, click "API Keys" in the top menu
+     → copy your Master Key and paste it below where it says
+     $2a$10$ztF18kJVBgfxQ4YSFTkWbuJ3sGeltrEhCC6TdVStkJ1kuXjlqYGfO
+
+  3. Click "Create Bin" in the left sidebar
+     → paste this as the starting content, then click Create:
+     {"properties":[],"nextId":1}
+     → copy the Bin ID from the URL (the long string after /b/)
+     → paste it below where it says 6a10e0a6ee5a733b12043541
+
+  4. Save this file, push to GitHub, share the link:
+     https://wriveraj.github.io/deal-tracker.html
+  ============================================================
+-->
+
+<script>
+  // ============================================================
+  // YOUR JSONBIN CONFIG — paste your values here
+  // ============================================================
+  const MASTER_KEY = "$2a$10$ztF18kJVBgfxQ4YSFTkWbuJ3sGeltrEhCC6TdVStkJ1kuXjlqYGfO";   // starts with $2b$...
+  const BIN_ID     = "6a10e0a6ee5a733b12043541";       // looks like 6649abc123def...
+  // ============================================================
+
+  const API_BASE = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+  const HEADERS  = { "Content-Type": "application/json", "X-Master-Key": MASTER_KEY };
+
+  const STAGES    = ["Watching","Toured","Offer","Passed","Closed"];
+  const STAGE_KEY = s => s.toLowerCase().replace(" ","");
+  const fmt       = n => n && n > 0 ? "$" + Number(n).toLocaleString() : "—";
+  const timeAgo   = ts => {
+    if (!ts) return "";
+    const d = Date.now() - new Date(ts).getTime();
+    if (d < 60000)    return "just now";
+    if (d < 3600000)  return Math.floor(d/60000) + "m ago";
+    if (d < 86400000) return Math.floor(d/3600000) + "h ago";
+    return Math.floor(d/86400000) + "d ago";
+  };
+
+  const DEFAULT_PROPS = [
+    {id:1,address:"4 Bellview Rd",      city:"Branford, CT 06405",      price:0,beds:"",baths:"",sqft:"",dom:"",status:"Watching",url:"",note:"Visit 5/23/26",          favorite:false,source:"",updatedBy:"",updatedAt:""},
+    {id:2,address:"115 Bellevue Ave",   city:"West Haven, CT 06516",    price:0,beds:"",baths:"",sqft:"",dom:"",status:"Watching",url:"",note:"Visit 5/23/26",          favorite:false,source:"",updatedBy:"",updatedAt:""},
+    {id:3,address:"54 Overlook Ave",    city:"West Haven, CT 06516",    price:0,beds:"",baths:"",sqft:"",dom:"",status:"Watching",url:"",note:"Visit 5/23/26 — top pick",favorite:true, source:"",updatedBy:"",updatedAt:""},
+    {id:4,address:"House 4 — TBD",      city:"",                        price:0,beds:"",baths:"",sqft:"",dom:"",status:"Watching",url:"",note:"Visit 5/24/26",          favorite:false,source:"",updatedBy:"",updatedAt:""},
+  ];
+
+  let properties = [];
+  let nextId     = 5;
+  let filterStage = "All";
+  let editing    = null;
+  let userName   = localStorage.getItem("dt-username") || "";
+  let lastSnapshot = "";
+  let saveQueued = false;
+  let configured = MASTER_KEY !== "$2a$10$ztF18kJVBgfxQ4YSFTkWbuJ3sGeltrEhCC6TdVStkJ1kuXjlqYGfO" && BIN_ID !== "6a10e0a6ee5a733b12043541";
+
+  // ── Storage ─────────────────────────────────────────────────
+  async function loadData() {
+    if (!configured) {
+      properties = JSON.parse(JSON.stringify(DEFAULT_PROPS));
+      nextId = 5;
+      setSyncStatus(false, "⚠️ Add your JSONBin keys to go live — running in preview mode");
+      renderAll();
+      return;
+    }
+    setSyncStatus(null, "Connecting...");
+    try {
+      const res  = await fetch(`${API_BASE}/latest`, { headers: HEADERS });
+      const json = await res.json();
+      const data = json.record;
+      if (!data.properties || data.properties.length === 0) {
+        // First time — seed default data
+        properties = JSON.parse(JSON.stringify(DEFAULT_PROPS));
+        nextId = 5;
+        await saveData(false);
+      } else {
+        properties = data.properties;
+        nextId     = data.nextId || properties.length + 1;
+      }
+      lastSnapshot = JSON.stringify(properties);
+      setSyncStatus(true, "Live · " + now());
+      renderAll();
+    } catch(e) {
+      setSyncStatus(false, "Connection failed — check your keys");
+      properties = JSON.parse(JSON.stringify(DEFAULT_PROPS));
+      renderAll();
+    }
+  }
+
+  async function saveData(showStatus = true) {
+    if (!configured) return;
+    try {
+      await fetch(API_BASE, {
+        method: "PUT",
+        headers: HEADERS,
+        body: JSON.stringify({ properties, nextId })
+      });
+      lastSnapshot = JSON.stringify(properties);
+      if (showStatus) setSyncStatus(true, "Saved · " + now());
+    } catch(e) {
+      setSyncStatus(false, "Save failed — check connection");
+    }
+  }
+
+  async function pollForChanges() {
+    if (!configured) return;
+    try {
+      const res  = await fetch(`${API_BASE}/latest`, { headers: HEADERS });
+      const json = await res.json();
+      const data = json.record;
+      const snap = JSON.stringify(data.properties);
+      if (snap !== lastSnapshot) {
+        // Someone else made a change — highlight updated cards
+        const incoming = data.properties || [];
+        incoming.forEach(p => {
+          const existing = properties.find(x => x.id === p.id);
+          if (!existing) return;
+          if (existing.updatedAt !== p.updatedAt && p.updatedBy !== userName) {
+            flashCard(p.id);
+          }
+        });
+        properties   = data.properties || [];
+        nextId       = data.nextId || nextId;
+        lastSnapshot = snap;
+        setSyncStatus(true, "Updated · " + now());
+        renderAll();
+      } else {
+        setSyncStatus(true, "Live · " + now());
+      }
+    } catch(e) { /* silent */ }
+  }
+
+  function flashCard(id) {
+    const el = document.getElementById("card-" + id);
+    if (el) {
+      el.classList.add("just-updated");
+      setTimeout(() => el.classList.remove("just-updated"), 4000);
+    }
+  }
+
+  function now() {
+    return new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+  }
+
+  function stamp(p) {
+    p.updatedBy = userName || "Someone";
+    p.updatedAt = new Date().toISOString();
+  }
+
+  // ── Render ──────────────────────────────────────────────────
+  function setSyncStatus(ok, msg) {
+    const dot = document.getElementById("sync-dot");
+    const lbl = document.getElementById("sync-label");
+    if (dot) dot.className = "sync-dot" + (ok === true ? "" : ok === false ? " stale" : " pending");
+    if (lbl) lbl.textContent = msg;
+  }
+
+  function statusBadge(s) {
+    return `<span class="badge badge-${STAGE_KEY(s)}">${s}</span>`;
+  }
+
+  function renderStats() {
+    const el = document.getElementById("stats");
+    if (!el) return;
+    const total  = properties.length;
+    const active = properties.filter(p => p.status !== "Passed" && p.status !== "Closed").length;
+    const favs   = properties.filter(p => p.favorite).length;
+    const toured = properties.filter(p => p.status === "Toured" || p.status === "Offer").length;
+    el.innerHTML = [
+      ["Total tracked", total],
+      ["Active", active],
+      ["Toured / offer", toured],
+      ["Favorites", favs]
+    ].map(([l,v]) => `
+      <div class="stat">
+        <div class="stat-label">${l}</div>
+        <div class="stat-val">${v}</div>
+      </div>`).join("");
+  }
+
+  function renderFilters() {
+    const el = document.getElementById("filters");
+    if (!el) return;
+    const counts = {};
+    ["All",...STAGES].forEach(s => {
+      counts[s] = s === "All" ? properties.length : properties.filter(p => p.status === s).length;
+    });
+    el.innerHTML = ["All",...STAGES].map(s =>
+      `<button class="pill${filterStage===s?" active":""}" onclick="setFilter('${s}')">
+        ${s} <span class="pill-count">${counts[s]}</span>
+      </button>`
+    ).join("");
+  }
+
+  function setFilter(s) { filterStage = s; renderFilters(); renderCards(); }
+
+  function renderCards() {
+    const el = document.getElementById("cards");
+    if (!el) return;
+    const list = filterStage === "All" ? properties : properties.filter(p => p.status === filterStage);
+    if (!list.length) {
+      el.innerHTML = `<div class="empty">
+        <div style="font-size:36px;margin-bottom:10px">🏚</div>
+        No properties in this stage yet
+      </div>`;
+      return;
+    }
+    el.innerHTML = list.map(p => {
+      const sk = STAGE_KEY(p.status);
+      const stageRow = STAGES.map(s =>
+        `<button class="stage-btn${p.status===s?" active-"+STAGE_KEY(s):""}" onclick="setStage(${p.id},'${s}')">${s}</button>`
+      ).join("");
+      const pills = [
+        p.price && p.price > 0 ? `<span class="meta-pill">💲 ${fmt(p.price)}</span>` : "",
+        p.beds  ? `<span class="meta-pill">🛏 ${p.beds} bd</span>` : "",
+        p.baths ? `<span class="meta-pill">🚿 ${p.baths} ba</span>` : "",
+        p.sqft  ? `<span class="meta-pill">📐 ${Number(p.sqft).toLocaleString()} sqft</span>` : "",
+        p.dom   ? `<span class="meta-pill">📅 ${p.dom} DOM</span>` : "",
+        p.source? `<span class="meta-pill">🌐 ${p.source}</span>` : "",
+      ].join("");
+      const updatedStr = p.updatedBy
+        ? `<div class="updated-by">✏️ ${p.updatedBy} · ${timeAgo(p.updatedAt)}</div>` : "";
+      const urlBtn = p.url
+        ? `<a href="${p.url}" target="_blank" rel="noopener" class="icon-btn" title="View listing">🔗</a>` : "";
+      return `
+        <div class="card${p.favorite?" favorite":""}" id="card-${p.id}">
+          <div class="card-top">
+            <div class="card-icon" style="${p.favorite?"background:#FFF3E0":"background:#f5f5f3"}">
+              ${p.favorite ? "⭐" : "🏠"}
+            </div>
+            <div class="card-main">
+              <div class="card-addr">${p.address}</div>
+              <div class="card-sub">${[p.city, p.source].filter(Boolean).join(" · ") || "No details yet"}</div>
+            </div>
+            <div class="card-actions">
+              ${urlBtn}
+              <button class="icon-btn" onclick="toggleFav(${p.id})" title="${p.favorite?"Unfavorite":"Favorite"}">
+                ${p.favorite ? "💛" : "🤍"}
+              </button>
+              <button class="icon-btn" onclick="openEdit(${p.id})" title="Edit">✏️</button>
+              <button class="icon-btn danger" onclick="removeCard(${p.id})" title="Remove">🗑</button>
+            </div>
+          </div>
+          ${pills ? `<div class="card-mid">${statusBadge(p.status)} ${pills}</div>` : `<div class="card-mid">${statusBadge(p.status)}</div>`}
+          ${p.note ? `<div class="card-note">${p.note}</div>` : ""}
+          ${updatedStr}
+          <div class="stage-row">${stageRow}</div>
+        </div>`;
+    }).join("");
+  }
+
+  function renderAll() { renderStats(); renderFilters(); renderCards(); }
+
+  // ── Actions ─────────────────────────────────────────────────
+  function toggleFav(id) {
+    const p = properties.find(x => x.id === id); if (!p) return;
+    p.favorite = !p.favorite; stamp(p);
+    renderAll(); saveData();
+  }
+
+  function setStage(id, stage) {
+    const p = properties.find(x => x.id === id); if (!p) return;
+    p.status = stage; stamp(p);
+    renderAll(); saveData();
+  }
+
+  function removeCard(id) {
+    if (!confirm("Remove this property from the tracker?")) return;
+    properties = properties.filter(x => x.id !== id);
+    renderAll(); saveData();
+  }
+
+  // ── Modal ───────────────────────────────────────────────────
+  function openAdd()    { editing = null; renderModal(); }
+  function openEdit(id) { editing = properties.find(x => x.id === id); renderModal(); }
+  function closeModal() { editing = null; document.getElementById("modal-area").innerHTML = ""; }
+
+  function renderModal() {
+    const p = editing || {};
+    document.getElementById("modal-area").innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title">${editing ? "Edit property" : "Add property"}</div>
+          <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div class="field"><label>Address *</label>
+          <input id="f-addr" value="${p.address||""}" placeholder="123 Main St"></div>
+        <div class="field"><label>City / state / zip</label>
+          <input id="f-city" value="${p.city||""}" placeholder="West Haven, CT 06516"></div>
+        <div class="field-row">
+          <div class="field"><label>List price</label>
+            <input id="f-price" type="number" value="${p.price||""}" placeholder="385000"></div>
+          <div class="field"><label>Source</label>
+            <select id="f-source">
+              <option value="">— select —</option>
+              ${["Zillow","Realtor.com","Redfin","Agent","Other"].map(s =>
+                `<option${(p.source===s)?" selected":""}>${s}</option>`).join("")}
+            </select></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Beds</label>
+            <input id="f-beds" value="${p.beds||""}" placeholder="3"></div>
+          <div class="field"><label>Baths</label>
+            <input id="f-baths" value="${p.baths||""}" placeholder="2"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Sq ft</label>
+            <input id="f-sqft" type="number" value="${p.sqft||""}" placeholder="1400"></div>
+          <div class="field"><label>Days on market</label>
+            <input id="f-dom" type="number" value="${p.dom||""}" placeholder="12"></div>
+        </div>
+        <div class="field"><label>Status</label>
+          <select id="f-status">
+            ${STAGES.map(s => `<option${(p.status||"Watching")===s?" selected":""}>${s}</option>`).join("")}
+          </select></div>
+        <div class="field"><label>Listing URL</label>
+          <input id="f-url" value="${p.url||""}" placeholder="https://zillow.com/..."></div>
+        <div class="field"><label>Notes</label>
+          <textarea id="f-note">${p.note||""}</textarea></div>
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+          <button class="btn-save" onclick="saveProperty()">Save property</button>
+        </div>
+      </div>
+    </div>`;
+    setTimeout(() => document.getElementById("f-addr")?.focus(), 50);
+  }
+
+  function saveProperty() {
+    const addr = document.getElementById("f-addr").value.trim();
+    if (!addr) { document.getElementById("f-addr").focus(); return; }
+    const data = {
+      address: addr,
+      city:    document.getElementById("f-city").value.trim(),
+      price:   parseFloat(document.getElementById("f-price").value) || 0,
+      beds:    document.getElementById("f-beds").value.trim(),
+      baths:   document.getElementById("f-baths").value.trim(),
+      sqft:    document.getElementById("f-sqft").value.trim(),
+      dom:     document.getElementById("f-dom").value.trim(),
+      status:  document.getElementById("f-status").value,
+      url:     document.getElementById("f-url").value.trim(),
+      note:    document.getElementById("f-note").value.trim(),
+      source:  document.getElementById("f-source").value,
+    };
+    if (editing) { Object.assign(editing, data); stamp(editing); }
+    else { const np = {id: nextId++, favorite: false, updatedBy:"", updatedAt:"", ...data}; stamp(np); properties.push(np); }
+    closeModal(); renderAll(); saveData();
+  }
+
+  // ── Name prompt ─────────────────────────────────────────────
+  function promptName() {
+    document.getElementById("name-area").innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this)closeName()">
+      <div class="modal" style="max-width:340px;text-align:center">
+        <div class="modal-title" style="text-align:center">👋 Who are you?</div>
+        <p class="name-prompt-sub">Your name shows next to any changes you make so your partner knows who did what.</p>
+        <input id="name-input" value="${userName}" placeholder="e.g. Will" style="text-align:center;margin-bottom:14px">
+        <button class="btn-save" style="width:100%" onclick="saveName()">Let's go</button>
+      </div>
+    </div>`;
+    setTimeout(() => document.getElementById("name-input")?.focus(), 50);
+  }
+
+  function closeName() { document.getElementById("name-area").innerHTML = ""; }
+
+  function saveName() {
+    const v = document.getElementById("name-input").value.trim();
+    if (v) { userName = v; localStorage.setItem("dt-username", v); }
+    closeName();
+    document.getElementById("who-badge").textContent = userName || "Set name";
+  }
+
+  // ── Init ─────────────────────────────────────────────────────
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("who-badge").textContent = userName || "Set name";
+    loadData();
+    if (!userName) setTimeout(promptName, 700);
+    setInterval(pollForChanges, 15000);
+  });
+</script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f4f3f0;
+    color: #1a1a1a;
+    min-height: 100vh;
+    padding: 1.5rem 1rem 4rem;
+  }
+
+  .container { max-width: 700px; margin: 0 auto; }
+
+  .topbar { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem; gap: 12px; flex-wrap: wrap; }
+  .topbar-left h1 { font-size: 22px; font-weight: 700; letter-spacing: -.3px; }
+  .topbar-left p  { font-size: 12px; color: #999; margin-top: 2px; }
+  .topbar-right   { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  .who-badge { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; border: 1px solid #ddd; background: #fff; cursor: pointer; }
+  .who-badge:hover { background: #f0f0f0; }
+
+  .btn-add { padding: 8px 16px; border-radius: 9px; border: none; background: #1a1a1a; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .btn-add:hover { background: #333; }
+
+  .sync-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 1.25rem; font-size: 12px; color: #999; }
+  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #1D9E75; flex-shrink: 0; transition: background .3s; }
+  .sync-dot.stale   { background: #E24B4A; }
+  .sync-dot.pending { background: #BA7517; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+  .stat { background: #fff; border: 1px solid #eee; border-radius: 10px; padding: 10px 12px; text-align: center; }
+  .stat-label { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+  .stat-val   { font-size: 24px; font-weight: 700; }
+
+  .filter-row { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 1.25rem; align-items: center; }
+  .pill { display: flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 20px; border: 1px solid #ddd; background: #fff; font-size: 12px; font-weight: 500; cursor: pointer; color: #666; }
+  .pill:hover { background: #f5f5f5; }
+  .pill.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+  .pill.active .pill-count { background: rgba(255,255,255,.2); color: #fff; }
+  .pill-count { background: #f0f0f0; color: #888; border-radius: 10px; padding: 1px 6px; font-size: 10px; font-weight: 600; }
+
+  .cards { display: flex; flex-direction: column; gap: 12px; }
+
+  .card {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+    transition: border-color .3s, box-shadow .3s;
+  }
+  .card.favorite     { border-color: #BA7517; }
+  .card.just-updated { border-color: #378ADD; box-shadow: 0 0 0 3px #E6F1FB; }
+
+  .card-top { display: flex; align-items: flex-start; gap: 12px; }
+  .card-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .card-main { flex: 1; min-width: 0; }
+  .card-addr { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-sub  { font-size: 12px; color: #999; margin-top: 3px; }
+  .card-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+
+  .icon-btn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid #eee; background: transparent; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; text-decoration: none; color: inherit; }
+  .icon-btn:hover { background: #f5f5f5; }
+  .icon-btn.danger:hover { background: #fff0f0; border-color: #fcc; }
+
+  .card-mid { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+  .meta-pill { font-size: 11px; color: #666; background: #f7f7f5; border-radius: 8px; padding: 3px 8px; }
+
+  .badge { padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .badge-watching { background: #E6F1FB; color: #0C447C; }
+  .badge-toured   { background: #FAEEDA; color: #633806; }
+  .badge-offer    { background: #EEEDFE; color: #3C3489; }
+  .badge-passed   { background: #f0f0ee; color: #666; }
+  .badge-closed   { background: #EAF3DE; color: #27500A; }
+
+  .card-note  { font-size: 13px; color: #555; margin-top: 10px; padding-top: 10px; border-top: 1px solid #f3f3f3; line-height: 1.55; }
+  .updated-by { font-size: 11px; color: #bbb; margin-top: 7px; }
+
+  .stage-row { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+  .stage-btn { padding: 4px 11px; border-radius: 12px; font-size: 11px; font-weight: 500; cursor: pointer; border: 1px solid #e5e5e5; background: #f7f7f7; color: #888; }
+  .stage-btn:hover { background: #eee; }
+  .stage-btn.active-watching { background: #E6F1FB; color: #0C447C; border-color: #B5D4F4; }
+  .stage-btn.active-toured   { background: #FAEEDA; color: #633806; border-color: #FAC775; }
+  .stage-btn.active-offer    { background: #EEEDFE; color: #3C3489; border-color: #CECBF6; }
+  .stage-btn.active-passed   { background: #f0f0ee; color: #666;    border-color: #ddd; }
+  .stage-btn.active-closed   { background: #EAF3DE; color: #27500A; border-color: #C0DD97; }
+
+  .empty { text-align: center; padding: 3rem 1rem; color: #bbb; font-size: 14px; }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; padding: 1rem; z-index: 999; }
+  .modal { background: #fff; border-radius: 16px; padding: 1.5rem; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; }
+  .modal-title { font-size: 17px; font-weight: 700; }
+  .modal-close { width: 28px; height: 28px; border-radius: 8px; border: 1px solid #eee; background: transparent; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #888; }
+  .modal-close:hover { background: #f5f5f5; }
+
+  .field { margin-bottom: 12px; }
+  .field label { display: block; font-size: 12px; color: #777; font-weight: 500; margin-bottom: 4px; }
+  .field input, .field select, .field textarea {
+    width: 100%; padding: 9px 12px; border: 1px solid #ddd; border-radius: 9px;
+    font-size: 14px; font-family: inherit; color: #1a1a1a; background: #fff; outline: none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: #1a1a1a; }
+  .field textarea { min-height: 72px; resize: vertical; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .modal-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.1rem; }
+  .btn-cancel { padding: 8px 18px; border-radius: 9px; border: 1px solid #ddd; background: transparent; font-size: 13px; cursor: pointer; color: #666; }
+  .btn-save   { padding: 8px 18px; border-radius: 9px; border: none; background: #1a1a1a; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .btn-save:hover { background: #333; }
+
+  .name-prompt-sub { font-size: 13px; color: #888; line-height: 1.5; margin-bottom: 14px; }
+
+  @media (max-width: 500px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .field-row  { grid-template-columns: 1fr; }
+    .topbar     { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="modal-area"></div>
+  <div id="name-area"></div>
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>🏠 Rivera Deal Tracker</h1>
+      <p>Shared · syncs every 15 seconds for both of you</p>
+    </div>
+    <div class="topbar-right">
+      <button class="who-badge" id="who-badge" onclick="promptName()">Set name</button>
+      <button class="btn-add" onclick="openAdd()">+ Add property</button>
+    </div>
+  </div>
+
+  <div class="sync-bar">
+    <div class="sync-dot pending" id="sync-dot"></div>
+    <span id="sync-label">Connecting...</span>
+  </div>
+
+  <div class="stats-row" id="stats"></div>
+  <div class="filter-row" id="filters"></div>
+  <div class="cards" id="cards">
+    <div class="empty">Loading your properties...</div>
+  </div>
+</div>
+</body>
+</html>
