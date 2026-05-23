@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rivera Home Tracker</title>
+<script>
+  // ============================================================
+  // JSONBIN CONFIG
+  // ============================================================
+  const MASTER_KEY = "$2a$10$ztF18kJVBgfxQ4YSFTkWbuJ3sGeltrEhCC6TdVStkJ1kuXjlqYGfO";
+  const BIN_ID     = "6a10e0a6ee5a733b12043541";
+  // ============================================================
+
+  const API_BASE = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+  const HEADERS  = { "Content-Type": "application/json", "X-Master-Key": MASTER_KEY };
+
+  const STAGES    = ["Watching","Toured","Offer","Passed","Closed"];
+  const STAGE_KEY = s => s.toLowerCase().replace(" ","");
+  const fmt       = n => n && n > 0 ? "$" + Number(n).toLocaleString() : "—";
+  const timeAgo   = ts => {
+    if (!ts) return "";
+    const d = Date.now() - new Date(ts).getTime();
+    if (d < 60000)    return "just now";
+    if (d < 3600000)  return Math.floor(d/60000) + "m ago";
+    if (d < 86400000) return Math.floor(d/3600000) + "h ago";
+    return Math.floor(d/86400000) + "d ago";
+  };
+  const now = () => new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+
+  const CHECKLIST_SECTIONS = [
+    { icon:"🏠", label:"Exterior & curb appeal", items:[
+      {id:"e1", text:"Roof condition",               note:"Missing shingles, sagging, or moss"},
+      {id:"e2", text:"Gutters & downspouts",          note:"Rust, sagging, or improper drainage"},
+      {id:"e3", text:"Foundation cracks or settling", note:"Horizontal cracks are a red flag"},
+      {id:"e4", text:"Siding or exterior paint",      note:"Peeling, rot, or warping"},
+      {id:"e5", text:"Driveway & walkways",           note:"Cracks, heaving, drainage issues"},
+      {id:"e6", text:"Yard grading",                  note:"Ground should slope away from house"},
+    ]},
+    { icon:"💡", label:"Interior — main living areas", items:[
+      {id:"i1", text:"Ceilings for water stains or cracks"},
+      {id:"i2", text:"Floors — squeaks, soft spots, or uneven areas"},
+      {id:"i3", text:"Walls for cracks, bulges, or patching signs"},
+      {id:"i4", text:"Windows open, close, and lock properly"},
+      {id:"i5", text:"Natural light throughout",     note:"Which rooms feel dark?"},
+      {id:"i6", text:"Cell signal in every room"},
+    ]},
+    { icon:"🔧", label:"Kitchen & bathrooms", items:[
+      {id:"k1", text:"Water pressure at faucets and showerheads"},
+      {id:"k2", text:"Cabinet doors align and close flush"},
+      {id:"k3", text:"Under-sink plumbing for leaks or staining"},
+      {id:"k4", text:"Exhaust fans work in kitchen and bathrooms"},
+      {id:"k5", text:"Grout and caulk condition",   note:"Mold or deterioration = moisture"},
+      {id:"k6", text:"Hot water — how long to reach the tap?"},
+      {id:"k7", text:"Garbage disposal and appliances work"},
+    ]},
+    { icon:"⚡", label:"Systems — HVAC, electrical & plumbing", items:[
+      {id:"s1", text:"HVAC unit age and last service date"},
+      {id:"s2", text:"Air filter condition",         note:"Tells you how well it was maintained"},
+      {id:"s3", text:"Electrical panel — size, breakers, labeling"},
+      {id:"s4", text:"Outlets work and have ground prongs", note:"GFCI in wet areas"},
+      {id:"s5", text:"Water heater age and condition"},
+      {id:"s6", text:"Visible pipes for corrosion or patching"},
+      {id:"s7", text:"Smoke & CO detectors present"},
+    ]},
+    { icon:"🏚", label:"Basement, attic & garage", items:[
+      {id:"b1", text:"Basement for moisture, efflorescence, or musty smell"},
+      {id:"b2", text:"Sump pump present and functional"},
+      {id:"b3", text:"Attic insulation level and ventilation"},
+      {id:"b4", text:"Attic for daylight coming through roof boards"},
+      {id:"b5", text:"Garage door functions properly"},
+      {id:"b6", text:"Carbon monoxide risk in attached garage"},
+    ]},
+    { icon:"📍", label:"Neighborhood & location", items:[
+      {id:"n1", text:"Street noise level at time of visit"},
+      {id:"n2", text:"Proximity to schools, shopping, commute"},
+      {id:"n3", text:"Parking availability for guests"},
+      {id:"n4", text:"Neighboring properties — upkeep and condition"},
+      {id:"n5", text:"Flood zone or drainage concerns nearby"},
+    ]},
+  ];
+
+  const FAVORITE_EXTRAS = [
+    {id:"fx1", text:"Walk every room twice — first impression vs second look"},
+    {id:"fx2", text:"Test ALL faucets, switches, and outlets"},
+    {id:"fx3", text:"Photograph everything — walls, ceilings, mechanicals, exterior"},
+    {id:"fx4", text:"Note exact HVAC model and water heater serial for age lookup"},
+    {id:"fx5", text:"Check cell signal in every room"},
+    {id:"fx6", text:"Sit in the main living space — does it feel right?"},
+    {id:"fx7", text:"Ask agent: how long on market, price reductions, prior offers?"},
+    {id:"fx8", text:"Drive the neighborhood at a different time if possible"},
+  ];
+
+  const DEFAULT_PROPS = [
+    {id:1, address:"4 Bellview Rd",    city:"Branford, CT 06405",   date:"5/23/26", price:0,beds:"",baths:"",sqft:"",dom:"",status:"Watching",url:"",note:"Visit 5/23/26",           favorite:false,source:"",updatedBy:"",updatedAt:"",
+     checklist:{checked:{},flagged:{},extraChecked:{},notes:""}},
+    {id:2, address:"115 Bellevue Ave", city:"West Haven, CT 06516", date:"5/23/26", price:0,beds:"",baths:"",sqft:"",dom:"",status:"Watching",url:"",note:"Visit 5/23/26",           favorite:false,source:"",updatedBy:"",updatedAt:"",
+     checklist:{checked:{},flagged:{},extraChecked:{},notes:""}},
+    {id:3, address:"54 Overlook Ave",  city:"West Haven, CT 06516", date:"5/23/26", price:0,beds:"",baths:"",sqft:"",dom:"",status:"Watching",url:"",note:"Visit 5/23/26 — top pick",favorite:true, source:"",updatedBy:"",updatedAt:"",
+     checklist:{checked:{},flagged:{},extraChecked:{},notes:""}},
+    {id:4, address:"House 4 — TBD",   city:"",                     date:"5/24/26", price:0,beds:"",baths:"",sqft:"",dom:"",status:"Watching",url:"",note:"Visit 5/24/26",           favorite:false,source:"",updatedBy:"",updatedAt:"",
+     checklist:{checked:{},flagged:{},extraChecked:{},notes:""}},
+  ];
+
+  let properties   = [];
+  let nextId       = 5;
+  let filterStage  = "All";
+  let activeTab    = "tracker";   // "tracker" | "checklist"
+  let checkHouseId = 1;
+  let editing      = null;
+  let userName     = localStorage.getItem("dt-username") || "";
+  let lastSnapshot = "";
+
+  // ── JSONBin ──────────────────────────────────────────────────
+  async function loadData() {
+    setSyncStatus(null, "Connecting...");
+    try {
+      const res  = await fetch(`${API_BASE}/latest`, { headers: HEADERS });
+      const json = await res.json();
+      const data = json.record;
+      if (!data.properties || data.properties.length === 0) {
+        properties = JSON.parse(JSON.stringify(DEFAULT_PROPS));
+        nextId = 5;
+        await saveData(false);
+      } else {
+        properties = data.properties.map(p => ({
+          ...p,
+          checklist: p.checklist || {checked:{},flagged:{},extraChecked:{},notes:""}
+        }));
+        nextId = data.nextId || properties.length + 1;
+      }
+      lastSnapshot = JSON.stringify(properties);
+      setSyncStatus(true, "Live · " + now());
+      renderAll();
+    } catch(e) {
+      setSyncStatus(false, "Connection failed");
+      properties = JSON.parse(JSON.stringify(DEFAULT_PROPS));
+      renderAll();
+    }
+  }
+
+  async function saveData(showStatus = true) {
+    try {
+      await fetch(API_BASE, { method:"PUT", headers: HEADERS, body: JSON.stringify({ properties, nextId }) });
+      lastSnapshot = JSON.stringify(properties);
+      if (showStatus) setSyncStatus(true, "Saved · " + now());
+    } catch(e) { setSyncStatus(false, "Save failed"); }
+  }
+
+  async function pollForChanges() {
+    try {
+      const res  = await fetch(`${API_BASE}/latest`, { headers: HEADERS });
+      const json = await res.json();
+      const data = json.record;
+      const snap = JSON.stringify(data.properties);
+      if (snap !== lastSnapshot) {
+        const incoming = data.properties || [];
+        incoming.forEach(p => {
+          const ex = properties.find(x => x.id === p.id);
+          if (ex && ex.updatedAt !== p.updatedAt && p.updatedBy !== userName) flashCard(p.id);
+        });
+        properties   = incoming.map(p => ({...p, checklist: p.checklist || {checked:{},flagged:{},extraChecked:{},notes:""}}));
+        nextId       = data.nextId || nextId;
+        lastSnapshot = snap;
+        setSyncStatus(true, "Updated · " + now());
+        renderAll();
+      } else {
+        setSyncStatus(true, "Live · " + now());
+      }
+    } catch(e) {}
+  }
+
+  function flashCard(id) {
+    const el = document.getElementById("card-" + id);
+    if (el) { el.classList.add("just-updated"); setTimeout(() => el.classList.remove("just-updated"), 4000); }
+  }
+
+  function stamp(p) { p.updatedBy = userName || "Someone"; p.updatedAt = new Date().toISOString(); }
+
+  // ── Sync UI ──────────────────────────────────────────────────
+  function setSyncStatus(ok, msg) {
+    const dot = document.getElementById("sync-dot");
+    const lbl = document.getElementById("sync-label");
+    if (dot) dot.className = "sync-dot" + (ok===true?"":ok===false?" stale":" pending");
+    if (lbl) lbl.textContent = msg;
+  }
+
+  // ── Tab switching ────────────────────────────────────────────
+  function switchTab(tab) {
+    activeTab = tab;
+    document.getElementById("tab-tracker").classList.toggle("active", tab==="tracker");
+    document.getElementById("tab-checklist").classList.toggle("active", tab==="checklist");
+    document.getElementById("view-tracker").style.display   = tab==="tracker"   ? "" : "none";
+    document.getElementById("view-checklist").style.display = tab==="checklist" ? "" : "none";
+    if (tab==="checklist") renderChecklist();
+  }
+
+  // ══════════════════════════════════════════════════════════════
+  // DEAL TRACKER
+  // ══════════════════════════════════════════════════════════════
+  function statusBadge(s) { return `<span class="badge badge-${STAGE_KEY(s)}">${s}</span>`; }
+
+  function renderStats() {
+    const el = document.getElementById("stats");
+    if (!el) return;
+    const total  = properties.length;
+    const active = properties.filter(p => p.status!=="Passed"&&p.status!=="Closed").length;
+    const favs   = properties.filter(p => p.favorite).length;
+    const toured = properties.filter(p => p.status==="Toured"||p.status==="Offer").length;
+    el.innerHTML = [["Total",total],["Active",active],["Toured/Offer",toured],["Favorites",favs]]
+      .map(([l,v])=>`<div class="stat"><div class="stat-label">${l}</div><div class="stat-val">${v}</div></div>`).join("");
+  }
+
+  function renderFilters() {
+    const el = document.getElementById("filters");
+    if (!el) return;
+    const counts = {};
+    ["All",...STAGES].forEach(s => { counts[s] = s==="All" ? properties.length : properties.filter(p=>p.status===s).length; });
+    el.innerHTML = ["All",...STAGES].map(s =>
+      `<button class="pill${filterStage===s?" active":""}" onclick="setFilter('${s}')">${s} <span class="pill-count">${counts[s]}</span></button>`
+    ).join("");
+  }
+
+  function setFilter(s) { filterStage=s; renderFilters(); renderCards(); }
+
+  function renderCards() {
+    const el = document.getElementById("cards");
+    if (!el) return;
+    const list = filterStage==="All" ? properties : properties.filter(p=>p.status===filterStage);
+    if (!list.length) { el.innerHTML=`<div class="empty">🏚<br>No properties in this stage</div>`; return; }
+
+    el.innerHTML = list.map(p => {
+      const cl = p.checklist || {checked:{},flagged:{},extraChecked:{},notes:""};
+      const allItems = CHECKLIST_SECTIONS.reduce((a,s)=>a.concat(s.items),[]);
+      const totalItems = allItems.length + (p.favorite ? FAVORITE_EXTRAS.length : 0);
+      const doneItems  = Object.values(cl.checked).filter(Boolean).length +
+                         Object.values(cl.extraChecked||{}).filter(Boolean).length;
+      const flagCount  = Object.values(cl.flagged).filter(Boolean).length;
+      const pct = totalItems > 0 ? Math.round((doneItems/totalItems)*100) : 0;
+
+      const stageRow = STAGES.map(s =>
+        `<button class="stage-btn${p.status===s?" active-"+STAGE_KEY(s):""}" onclick="setStage(${p.id},'${s}')">${s}</button>`
+      ).join("");
+      const pills = [
+        p.price&&p.price>0 ? `<span class="meta-pill">💲${fmt(p.price)}</span>` : "",
+        p.beds   ? `<span class="meta-pill">🛏 ${p.beds} bd</span>`  : "",
+        p.baths  ? `<span class="meta-pill">🚿 ${p.baths} ba</span>` : "",
+        p.sqft   ? `<span class="meta-pill">📐 ${Number(p.sqft).toLocaleString()} sqft</span>` : "",
+        p.dom    ? `<span class="meta-pill">📅 ${p.dom} DOM</span>`  : "",
+        p.source ? `<span class="meta-pill">🌐 ${p.source}</span>`   : "",
+      ].join("");
+      const urlBtn = p.url ? `<a href="${p.url}" target="_blank" class="icon-btn">🔗</a>` : "";
+      const updStr = p.updatedBy ? `<div class="updated-by">✏️ ${p.updatedBy} · ${timeAgo(p.updatedAt)}</div>` : "";
+
+      return `
+      <div class="card${p.favorite?" favorite":""}" id="card-${p.id}">
+        <div class="card-top">
+          <div class="card-icon" style="${p.favorite?"background:#FFF3E0":"background:#f5f5f3"}">${p.favorite?"⭐":"🏠"}</div>
+          <div class="card-main">
+            <div class="card-addr">${p.address}</div>
+            <div class="card-sub">${[p.city, p.date].filter(Boolean).join(" · ")}</div>
+          </div>
+          <div class="card-actions">
+            ${urlBtn}
+            <button class="icon-btn" onclick="toggleFav(${p.id})">${p.favorite?"💛":"🤍"}</button>
+            <button class="icon-btn" onclick="openEdit(${p.id})">✏️</button>
+            <button class="icon-btn danger" onclick="removeCard(${p.id})">🗑</button>
+          </div>
+        </div>
+        <div class="card-mid">${statusBadge(p.status)} ${pills}</div>
+        ${p.note ? `<div class="card-note">${p.note}</div>` : ""}
+        ${updStr}
+        <div class="checklist-bar-wrap" onclick="openChecklist(${p.id})" title="Open inspection checklist">
+          <div class="checklist-bar-label">
+            <span>🔍 Inspection checklist</span>
+            <span>${doneItems}/${totalItems} · ${pct}%${flagCount>0?` · 🚩 ${flagCount} flag${flagCount>1?"s":""}`:""}${p.date?" · "+p.date:""}</span>
+          </div>
+          <div class="checklist-bar-track"><div class="checklist-bar-fill${p.favorite?" fav":""}" style="width:${pct}%"></div></div>
+        </div>
+        <div class="stage-row">${stageRow}</div>
+      </div>`;
+    }).join("");
+  }
+
+  function renderAll() { renderStats(); renderFilters(); renderCards(); if(activeTab==="checklist") renderChecklist(); }
+
+  // ── Tracker actions ──────────────────────────────────────────
+  function toggleFav(id) {
+    const p=properties.find(x=>x.id===id); if(!p)return;
+    p.favorite=!p.favorite; stamp(p); renderAll(); saveData();
+  }
+  function setStage(id,stage) {
+    const p=properties.find(x=>x.id===id); if(!p)return;
+    p.status=stage; stamp(p); renderAll(); saveData();
+  }
+  function removeCard(id) {
+    if(!confirm("Remove this property?"))return;
+    properties=properties.filter(x=>x.id!==id); renderAll(); saveData();
+  }
+
+  // ── Tracker modal ────────────────────────────────────────────
+  function openAdd()    { editing=null; renderModal(); }
+  function openEdit(id) { editing=properties.find(x=>x.id===id); renderModal(); }
+  function closeModal() { editing=null; document.getElementById("modal-area").innerHTML=""; }
+
+  function renderModal() {
+    const p=editing||{};
+    document.getElementById("modal-area").innerHTML=`
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title">${editing?"Edit property":"Add property"}</div>
+          <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div class="field"><label>Address *</label><input id="f-addr" value="${p.address||""}" placeholder="123 Main St"></div>
+        <div class="field"><label>City / state / zip</label><input id="f-city" value="${p.city||""}" placeholder="West Haven, CT 06516"></div>
+        <div class="field"><label>Visit date</label><input id="f-date" value="${p.date||""}" placeholder="5/23/26"></div>
+        <div class="field-row">
+          <div class="field"><label>List price</label><input id="f-price" type="number" value="${p.price||""}" placeholder="385000"></div>
+          <div class="field"><label>Source</label><select id="f-source"><option value="">— select —</option>
+            ${["Zillow","Realtor.com","Redfin","Agent","Other"].map(s=>`<option${p.source===s?" selected":""}>${s}</option>`).join("")}
+          </select></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Beds</label><input id="f-beds" value="${p.beds||""}" placeholder="3"></div>
+          <div class="field"><label>Baths</label><input id="f-baths" value="${p.baths||""}" placeholder="2"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Sq ft</label><input id="f-sqft" type="number" value="${p.sqft||""}" placeholder="1400"></div>
+          <div class="field"><label>Days on market</label><input id="f-dom" type="number" value="${p.dom||""}" placeholder="12"></div>
+        </div>
+        <div class="field"><label>Status</label><select id="f-status">
+          ${STAGES.map(s=>`<option${(p.status||"Watching")===s?" selected":""}>${s}</option>`).join("")}
+        </select></div>
+        <div class="field"><label>Listing URL</label><input id="f-url" value="${p.url||""}" placeholder="https://zillow.com/..."></div>
+        <div class="field"><label>Notes</label><textarea id="f-note">${p.note||""}</textarea></div>
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+          <button class="btn-save" onclick="saveProperty()">Save property</button>
+        </div>
+      </div>
+    </div>`;
+    setTimeout(()=>document.getElementById("f-addr")?.focus(),50);
+  }
+
+  function saveProperty() {
+    const addr=document.getElementById("f-addr").value.trim(); if(!addr)return;
+    const data={
+      address:addr, city:document.getElementById("f-city").value.trim(),
+      date:document.getElementById("f-date").value.trim(),
+      price:parseFloat(document.getElementById("f-price").value)||0,
+      beds:document.getElementById("f-beds").value.trim(), baths:document.getElementById("f-baths").value.trim(),
+      sqft:document.getElementById("f-sqft").value.trim(), dom:document.getElementById("f-dom").value.trim(),
+      status:document.getElementById("f-status").value, url:document.getElementById("f-url").value.trim(),
+      note:document.getElementById("f-note").value.trim(), source:document.getElementById("f-source").value,
+    };
+    if(editing){ Object.assign(editing,data); stamp(editing); }
+    else { const np={id:nextId++,favorite:false,updatedBy:"",updatedAt:"",checklist:{checked:{},flagged:{},extraChecked:{},notes:""},...data}; stamp(np); properties.push(np); }
+    closeModal(); renderAll(); saveData();
+  }
+
+  // ══════════════════════════════════════════════════════════════
+  // CHECKLIST
+  // ══════════════════════════════════════════════════════════════
+  function openChecklist(id) { checkHouseId=id; switchTab("checklist"); }
+
+  function renderChecklist() {
+    const el=document.getElementById("view-checklist"); if(!el)return;
+    const p=properties.find(x=>x.id===checkHouseId);
+    if(!p){ el.innerHTML=`<div class="empty">Select a house from the Deal Tracker tab</div>`; return; }
+    const cl=p.checklist||(p.checklist={checked:{},flagged:{},extraChecked:{},notes:""});
+
+    const allItems=CHECKLIST_SECTIONS.reduce((a,s)=>a.concat(s.items),[]);
+    const totalItems=allItems.length+(p.favorite?FAVORITE_EXTRAS.length:0);
+    const doneItems=Object.values(cl.checked).filter(Boolean).length+Object.values(cl.extraChecked||{}).filter(Boolean).length;
+    const pct=totalItems>0?Math.round((doneItems/totalItems)*100):0;
+
+    // house tabs
+    const houseTabs=properties.map(h=>`
+      <button class="house-tab${h.id===checkHouseId?" active":""}${h.favorite?" fav-tab":""}" onclick="switchHouseChecklist(${h.id})">
+        ${h.favorite?"⭐ ":""}${h.address.split(",")[0]}<span class="htab-date">${h.date||""}</span>
+      </button>`).join("");
+
+    // sections
+    const sections=CHECKLIST_SECTIONS.map(sec=>`
+      <div class="cl-section">
+        <div class="cl-sec-head">${sec.icon} ${sec.label}</div>
+        ${sec.items.map(item=>`
+          <div class="cl-item${cl.checked[item.id]?" checked":""}${cl.flagged[item.id]?" flagged":""}">
+            <div class="cl-box" onclick="toggleCheck(${p.id},'${item.id}')"></div>
+            <div class="cl-text" onclick="toggleCheck(${p.id},'${item.id}')">
+              <div class="cl-label">${item.text}</div>
+              ${item.note?`<div class="cl-note">${item.note}</div>`:""}
+            </div>
+            <button class="cl-flag${cl.flagged[item.id]?" on":""}" onclick="toggleFlag(${p.id},'${item.id}')" title="Flag concern">🚩</button>
+          </div>`).join("")}
+      </div>`).join("");
+
+    const extraSection=p.favorite?`
+      <div class="cl-section fav-section">
+        <div class="cl-sec-head" style="color:#BA7517">⭐ Favorite — extra attention items</div>
+        ${FAVORITE_EXTRAS.map(item=>`
+          <div class="cl-item extra${cl.extraChecked&&cl.extraChecked[item.id]?" checked":""}">
+            <div class="cl-box extra-box" onclick="toggleExtra(${p.id},'${item.id}')"></div>
+            <div class="cl-text" onclick="toggleExtra(${p.id},'${item.id}')">
+              <div class="cl-label">${item.text}</div>
+            </div>
+          </div>`).join("")}
+      </div>`:"";
+
+    el.innerHTML=`
+      <div class="house-tabs-row">${houseTabs}</div>
+
+      ${p.favorite?`<div class="fav-banner">⭐ Favorite property — take your time here</div>`:""}
+
+      <div class="cl-progress-wrap">
+        <div class="cl-progress-label">
+          <span>${p.address}</span>
+          <span>${doneItems}/${totalItems} items · ${pct}%</span>
+        </div>
+        <div class="cl-progress-track">
+          <div class="cl-progress-fill${p.favorite?" fav":""}" style="width:${pct}%"></div>
+        </div>
+      </div>
+
+      ${sections}
+      ${extraSection}
+
+      <div class="cl-notes-wrap">
+        <div class="cl-notes-label">📝 Notes for this house</div>
+        <textarea class="cl-notes" id="cl-notes-input" placeholder="Jot down anything that stood out...">${cl.notes||""}</textarea>
+        <button class="btn-save" style="margin-top:8px;width:100%" onclick="saveNotes(${p.id})">Save notes</button>
+      </div>`;
+  }
+
+  function switchHouseChecklist(id) { checkHouseId=id; renderChecklist(); }
+
+  function toggleCheck(pid, itemId) {
+    const p=properties.find(x=>x.id===pid); if(!p)return;
+    if(!p.checklist)p.checklist={checked:{},flagged:{},extraChecked:{},notes:""};
+    p.checklist.checked[itemId]=!p.checklist.checked[itemId];
+    stamp(p); renderChecklist(); renderCards(); saveData();
+  }
+
+  function toggleFlag(pid, itemId) {
+    const p=properties.find(x=>x.id===pid); if(!p)return;
+    if(!p.checklist)p.checklist={checked:{},flagged:{},extraChecked:{},notes:""};
+    p.checklist.flagged[itemId]=!p.checklist.flagged[itemId];
+    stamp(p); renderChecklist(); renderCards(); saveData();
+  }
+
+  function toggleExtra(pid, itemId) {
+    const p=properties.find(x=>x.id===pid); if(!p)return;
+    if(!p.checklist.extraChecked)p.checklist.extraChecked={};
+    p.checklist.extraChecked[itemId]=!p.checklist.extraChecked[itemId];
+    stamp(p); renderChecklist(); renderCards(); saveData();
+  }
+
+  function saveNotes(pid) {
+    const p=properties.find(x=>x.id===pid); if(!p)return;
+    const val=document.getElementById("cl-notes-input")?.value||"";
+    p.checklist.notes=val; stamp(p); saveData();
+    setSyncStatus(true,"Notes saved · "+now());
+  }
+
+  // ── Name prompt ──────────────────────────────────────────────
+  function promptName() {
+    document.getElementById("name-area").innerHTML=`
+    <div class="modal-overlay" onclick="if(event.target===this)closeName()">
+      <div class="modal" style="max-width:320px;text-align:center">
+        <div class="modal-title">👋 Who are you?</div>
+        <p style="font-size:14px;color:#888;margin:0 0 12px;line-height:1.5">Your name shows next to changes so your partner knows who updated what.</p>
+        <input id="name-input" value="${userName}" placeholder="e.g. Will" style="text-align:center;margin-bottom:14px">
+        <button class="btn-save" style="width:100%" onclick="saveName()">Let's go</button>
+      </div>
+    </div>`;
+    setTimeout(()=>document.getElementById("name-input")?.focus(),50);
+  }
+
+  function closeName() { document.getElementById("name-area").innerHTML=""; }
+  function saveName() {
+    const v=document.getElementById("name-input").value.trim();
+    if(v){userName=v;localStorage.setItem("dt-username",v);}
+    closeName();
+    document.getElementById("who-badge").textContent=userName||"Set name";
+  }
+
+  // ── Init ─────────────────────────────────────────────────────
+  document.addEventListener("DOMContentLoaded",()=>{
+    document.getElementById("who-badge").textContent=userName||"Set name";
+    loadData();
+    if(!userName)setTimeout(promptName,700);
+    setInterval(pollForChanges,15000);
+  });
+</script>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f4f3f0;color:#1a1a1a;min-height:100vh;padding:1.5rem 1rem 4rem}
+.container{max-width:700px;margin:0 auto}
+
+/* top bar */
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.75rem;gap:12px;flex-wrap:wrap}
+.topbar-left h1{font-size:22px;font-weight:700}
+.topbar-left p{font-size:12px;color:#999;margin-top:2px}
+.topbar-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.who-badge{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid #ddd;background:#fff;cursor:pointer}
+.btn-add{padding:8px 16px;border-radius:9px;border:none;background:#1a1a1a;color:#fff;font-size:13px;font-weight:600;cursor:pointer}
+
+/* sync */
+.sync-bar{display:flex;align-items:center;gap:8px;margin-bottom:1rem;font-size:12px;color:#999}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#1D9E75;flex-shrink:0}
+.sync-dot.stale{background:#E24B4A}
+.sync-dot.pending{background:#BA7517}
+
+/* tab nav */
+.tab-nav{display:flex;gap:4px;margin-bottom:1.25rem;background:#e8e7e4;border-radius:12px;padding:4px}
+.tab-btn{flex:1;padding:8px;border-radius:9px;border:none;background:transparent;font-size:13px;font-weight:500;cursor:pointer;color:#666}
+.tab-btn.active{background:#fff;color:#1a1a1a;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+
+/* stats */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem}
+.stat{background:#fff;border:1px solid #eee;border-radius:10px;padding:10px 12px;text-align:center}
+.stat-label{font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.stat-val{font-size:24px;font-weight:700}
+
+/* filters */
+.filter-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:1.25rem}
+.pill{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;border:1px solid #ddd;background:#fff;font-size:12px;font-weight:500;cursor:pointer;color:#666}
+.pill.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.pill-count{background:#f0f0f0;color:#888;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:600}
+.pill.active .pill-count{background:rgba(255,255,255,.2);color:#fff}
+
+/* cards */
+.cards{display:flex;flex-direction:column;gap:12px}
+.card{background:#fff;border:1px solid #e8e8e8;border-radius:14px;padding:1rem 1.25rem;transition:border-color .3s,box-shadow .3s}
+.card.favorite{border-color:#BA7517}
+.card.just-updated{border-color:#378ADD;box-shadow:0 0 0 3px #E6F1FB}
+.card-top{display:flex;align-items:flex-start;gap:12px}
+.card-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.card-main{flex:1;min-width:0}
+.card-addr{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-sub{font-size:12px;color:#999;margin-top:3px}
+.card-actions{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.icon-btn{width:30px;height:30px;border-radius:8px;border:1px solid #eee;background:transparent;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.icon-btn:hover{background:#f5f5f5}
+.icon-btn.danger:hover{background:#fff0f0}
+.card-mid{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.meta-pill{font-size:11px;color:#666;background:#f7f7f5;border-radius:8px;padding:3px 8px}
+.badge{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600}
+.badge-watching{background:#E6F1FB;color:#0C447C}
+.badge-toured{background:#FAEEDA;color:#633806}
+.badge-offer{background:#EEEDFE;color:#3C3489}
+.badge-passed{background:#f0f0ee;color:#666}
+.badge-closed{background:#EAF3DE;color:#27500A}
+.card-note{font-size:13px;color:#555;margin-top:10px;padding-top:10px;border-top:1px solid #f3f3f3;line-height:1.55}
+.updated-by{font-size:11px;color:#bbb;margin-top:7px}
+
+/* checklist progress bar on card */
+.checklist-bar-wrap{margin-top:10px;cursor:pointer;padding:8px 10px;border-radius:9px;background:#f7f7f5;border:1px solid #eee}
+.checklist-bar-wrap:hover{background:#f0f0ee}
+.checklist-bar-label{display:flex;justify-content:space-between;font-size:11px;color:#888;margin-bottom:5px}
+.checklist-bar-track{height:5px;background:#e5e5e5;border-radius:3px}
+.checklist-bar-fill{height:5px;border-radius:3px;background:#1D9E75;transition:width .3s}
+.checklist-bar-fill.fav{background:#BA7517}
+
+/* stage row */
+.stage-row{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.stage-btn{padding:4px 11px;border-radius:12px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid #e5e5e5;background:#f7f7f7;color:#888}
+.stage-btn:hover{background:#eee}
+.stage-btn.active-watching{background:#E6F1FB;color:#0C447C;border-color:#B5D4F4}
+.stage-btn.active-toured{background:#FAEEDA;color:#633806;border-color:#FAC775}
+.stage-btn.active-offer{background:#EEEDFE;color:#3C3489;border-color:#CECBF6}
+.stage-btn.active-passed{background:#f0f0ee;color:#666;border-color:#ddd}
+.stage-btn.active-closed{background:#EAF3DE;color:#27500A;border-color:#C0DD97}
+
+/* checklist view */
+.house-tabs-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem}
+.house-tab{padding:6px 14px;border-radius:20px;border:1px solid #ddd;background:#fff;font-size:12px;font-weight:500;cursor:pointer;color:#666;display:flex;flex-direction:column;align-items:center}
+.house-tab.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.house-tab.fav-tab{border-color:#BA7517}
+.house-tab.fav-tab.active{background:#BA7517;border-color:#BA7517}
+.htab-date{font-size:10px;font-weight:400;opacity:.7;margin-top:1px}
+.fav-banner{background:#FFF8E7;border:1px solid #F0C060;border-radius:10px;padding:10px 14px;font-size:13px;font-weight:500;color:#7A4F00;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.cl-progress-wrap{margin-bottom:1.25rem}
+.cl-progress-label{display:flex;justify-content:space-between;font-size:12px;color:#888;margin-bottom:6px}
+.cl-progress-track{height:6px;background:#e5e5e5;border-radius:3px}
+.cl-progress-fill{height:6px;border-radius:3px;background:#1D9E75;transition:width .3s}
+.cl-progress-fill.fav{background:#BA7517}
+.cl-section{background:#fff;border:1px solid #eee;border-radius:12px;padding:1rem;margin-bottom:12px}
+.cl-section.fav-section{border-color:#F0C060;background:#FFFBF0}
+.cl-sec-head{font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em;padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid #f0f0f0}
+.cl-item{display:flex;align-items:flex-start;gap:10px;padding:7px 8px;border-radius:8px;cursor:pointer}
+.cl-item:hover{background:#f7f7f5}
+.cl-item.checked .cl-label{color:#bbb;text-decoration:line-through}
+.cl-item.flagged .cl-flag{color:#D85A30}
+.cl-box{width:18px;height:18px;border-radius:4px;border:1.5px solid #ddd;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.cl-item.checked .cl-box{background:#1D9E75;border-color:#1D9E75}
+.cl-item.checked .cl-box::after{content:"✓";font-size:11px;color:#fff;font-weight:700}
+.cl-item.extra .cl-box.extra-box{border-color:#BA7517}
+.cl-item.extra.checked .cl-box{background:#BA7517;border-color:#BA7517}
+.cl-text{flex:1}
+.cl-label{font-size:13px;color:#1a1a1a;line-height:1.4}
+.cl-note{font-size:11px;color:#aaa;margin-top:2px}
+.cl-flag{background:none;border:none;cursor:pointer;font-size:13px;color:#ddd;padding:2px 4px;border-radius:4px;flex-shrink:0}
+.cl-flag:hover{color:#D85A30}
+.cl-flag.on{color:#D85A30}
+.cl-notes-wrap{margin-top:1rem}
+.cl-notes-label{font-size:12px;font-weight:600;color:#888;margin-bottom:6px}
+.cl-notes{width:100%;min-height:80px;padding:10px;border:1px solid #ddd;border-radius:9px;font-size:13px;font-family:inherit;resize:vertical;color:#1a1a1a;background:#fff}
+
+/* modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:1rem;z-index:999}
+.modal{background:#fff;border-radius:16px;padding:1.5rem;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem}
+.modal-title{font-size:17px;font-weight:700}
+.modal-close{width:28px;height:28px;border-radius:8px;border:1px solid #eee;background:transparent;font-size:13px;cursor:pointer}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;color:#777;font-weight:500;margin-bottom:4px}
+.field input,.field select,.field textarea{width:100%;padding:9px 12px;border:1px solid #ddd;border-radius:9px;font-size:14px;font-family:inherit;color:#1a1a1a;background:#fff;outline:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#1a1a1a}
+.field textarea{min-height:72px;resize:vertical}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:1.1rem}
+.btn-cancel{padding:8px 18px;border-radius:9px;border:1px solid #ddd;background:transparent;font-size:13px;cursor:pointer;color:#666}
+.btn-save{padding:8px 18px;border-radius:9px;border:none;background:#1a1a1a;color:#fff;font-size:13px;font-weight:600;cursor:pointer}
+.btn-save:hover{background:#333}
+.empty{text-align:center;padding:3rem 1rem;color:#bbb;font-size:14px;line-height:2}
+@media(max-width:500px){
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .field-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="modal-area"></div>
+  <div id="name-area"></div>
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>🏠 Rivera Home Tracker</h1>
+      <p>Shared · syncs every 15 seconds for both of you</p>
+    </div>
+    <div class="topbar-right">
+      <button class="who-badge" id="who-badge" onclick="promptName()">Set name</button>
+      <button class="btn-add" onclick="openAdd()" id="add-btn">+ Add property</button>
+    </div>
+  </div>
+
+  <div class="sync-bar">
+    <div class="sync-dot pending" id="sync-dot"></div>
+    <span id="sync-label">Connecting...</span>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" id="tab-tracker" onclick="switchTab('tracker')">📋 Deal Tracker</button>
+    <button class="tab-btn" id="tab-checklist" onclick="switchTab('checklist')">✅ Inspection Checklist</button>
+  </div>
+
+  <!-- Deal Tracker view -->
+  <div id="view-tracker">
+    <div class="stats-row" id="stats"></div>
+    <div class="filter-row" id="filters"></div>
+    <div class="cards" id="cards"><div class="empty">Loading...</div></div>
+  </div>
+
+  <!-- Checklist view -->
+  <div id="view-checklist" style="display:none">
+    <div class="empty">Loading...</div>
+  </div>
+</div>
+</body>
+</html>
