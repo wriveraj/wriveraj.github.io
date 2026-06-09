@@ -152,6 +152,36 @@ footer { padding: 1.5rem 4rem; border-top: 1px solid var(--border); display: fle
   footer { padding: 1.5rem; flex-direction: column; gap: 0.75rem; text-align: center; }
   .stats-panel { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* Certificate Modal */
+.cert-modal-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+  z-index: 1000; align-items: center; justify-content: center;
+}
+.cert-modal-overlay.active { display: flex; }
+.cert-modal-inner {
+  position: relative; max-width: 90vw; max-height: 90vh;
+}
+.cert-modal-inner img {
+  max-width: 100%; max-height: 85vh; border-radius: 6px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+}
+.cert-modal-close {
+  position: absolute; top: -14px; right: -14px;
+  background: var(--accent); color: #000; border: none;
+  border-radius: 50%; width: 30px; height: 30px;
+  font-size: 1.1rem; font-weight: 700; cursor: pointer; line-height: 30px; text-align: center;
+}
+.cert-view-btn {
+  margin-top: 0.5rem; background: transparent;
+  border: 1px solid var(--accent); color: var(--accent);
+  font-size: 0.65rem; font-family: var(--font-mono);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0.25rem 0.6rem; border-radius: 3px;
+  cursor: pointer; transition: background 0.2s, color 0.2s;
+}
+.cert-view-btn:hover { background: var(--accent); color: #000; }
+
 </style>
 </head>
 <body>
@@ -373,21 +403,19 @@ footer { padding: 1.5rem 4rem; border-top: 1px solid var(--border); display: fle
       <div class="cert-stat"><span class="cert-stat-num">2026</span><span class="cert-stat-label">Latest Year</span></div>
     </div>
     <div class="cert-grid">
-      <div class="cert-card"><img src="certs/ll/postgresql_intro.jpg" alt="Introduction to PostgreSQL"><div class="cert-info"><div class="cert-name">Introduction to PostgreSQL</div><div class="cert-date">Aug 2025</div><div class="cert-tag">Data</div></div></div>
-      <div class="cert-date">2025</div><div class="cert-tag">Data</div></div></div>
-      <div class="cert-card"><img src="certs/ll/dbeaver.jpg" alt="DBeaver Essential Training"><div class="cert-info"><div class="cert-name">DBeaver Essential Training</div><div class="cert-date">Dec 2025</div><div class="cert-tag">Data</div></div></div>
-      <div class="cert-card"><img src="certs/ll/powerbi_essential.jpg" alt="Power BI Essential Training"><div class="cert-info"><div class="cert-name">Power BI Essential Training</div><div class="cert-date">Jan 2025</div><div class="cert-tag">Data</div></div></div>
-      <div class="cert-card"><img src="certs/ll/powerbi_dashboards.jpg" alt="Power BI: Dashboards"><div class="cert-info"><div class="cert-name">Power BI: Dashboards</div><div class="cert-date">Mar 2025</div><div class="cert-tag">Data</div></div></div>
-      <div class="cert-card"><img src="certs/ll/excel_essential.jpg" alt="Excel Essential Training"><div class="cert-info"><div class="cert-name">Excel Essential Training</div><div class="cert-date">Jul 2024</div><div class="cert-tag">Data</div></div></div>
-      <div class="cert-card"><img src="certs/ll/excel_pivottables.jpg" alt="Excel: PivotTables"><div class="cert-info"><div class="cert-name">Excel: PivotTables</div><div class="cert-date">Sep 2024</div><div class="cert-tag">Data</div></div></div>
-      <div class="cert-card"><img src="certs/ll/excel_powerpivot.jpg" alt="Excel: Power Pivot"><div class="cert-info"><div class="cert-name">Excel: Power Pivot</div><div class="cert-date">Oct 2024</div><div class="cert-tag">Data</div></div></div>
-      <div class="cert-card"><img src="certs/ll/excel_online.jpg" alt="Learning Excel Online"><div class="cert-info"><div class="cert-name">Learning Excel Online</div><div class="cert-date">Sep 2024</div><div class="cert-tag">Data</div></div></div>
-      <div class="cert-card"><img src="certs/ll/ai_ml.jpg" alt="AI Foundations: Machine Learning"><div class="cert-info"><div class="cert-name">AI Foundations: Machine Learning</div><div class="cert-date">Feb 2026</div><div class="cert-tag">AI</div></div></div>
-      <div class="cert-card"><img src="certs/ll/ai_nn.jpg" alt="AI Foundations: Neural Networks"><div class="cert-info"><div class="cert-name">AI Foundations: Neural Networks</div><div class="cert-date">Feb 2026</div><div class="cert-tag">AI</div></div></div>
-      <div class="cert-card"><img src="certs/ll/prompt_eng.jpg" alt="Prompt Engineering &amp; AI Agents"><div class="cert-info"><div class="cert-name">Prompt Engineering &amp; AI Agents</div><div class="cert-date">Jan 2026</div><div class="cert-tag">AI</div></div></div>
-      <div class="cert-card"><img src="certs/ll/ops_excellence.jpg" alt="Operational Excellence Foundations"><div class="cert-info"><div class="cert-name">Operational Excellence Foundations</div><div class="cert-date">May 2025</div><div class="cert-tag">Ops</div></div></div>
-      <div class="cert-card"><img src="certs/ll/six_sigma.jpg" alt="Six Sigma Foundations"><div class="cert-info"><div class="cert-name">Six Sigma Foundations</div><div class="cert-date">Apr 2025</div><div class="cert-tag">Ops</div></div></div>
-      <div class="cert-card"><img src="certs/ll/six_sigma_wb.jpg" alt="Six Sigma: White Belt"><div class="cert-info"><div class="cert-name">Six Sigma: White Belt</div><div class="cert-date">Apr 2025</div><div class="cert-tag">Ops</div></div></div>
+      <div class="cert-card"><img src="certs/ll/postgresql_intro.jpg" alt="Introduction to PostgreSQL"><div class="cert-info"><div class="cert-name">Introduction to PostgreSQL</div><div class="cert-date">Aug 2025</div><div class="cert-tag">Data</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/postgresql_intro.jpg');event.stopPropagation()">View Certificate</button></div></div>      <div class="cert-card"><img src="certs/ll/dbeaver.jpg" alt="DBeaver Essential Training"><div class="cert-info"><div class="cert-name">DBeaver Essential Training</div><div class="cert-date">Dec 2025</div><div class="cert-tag">Data</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/dbeaver.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/powerbi_essential.jpg" alt="Power BI Essential Training"><div class="cert-info"><div class="cert-name">Power BI Essential Training</div><div class="cert-date">Jan 2025</div><div class="cert-tag">Data</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/powerbi_essential.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/powerbi_dashboards.jpg" alt="Power BI: Dashboards"><div class="cert-info"><div class="cert-name">Power BI: Dashboards</div><div class="cert-date">Mar 2025</div><div class="cert-tag">Data</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/powerbi_dashboards.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/excel_essential.jpg" alt="Excel Essential Training"><div class="cert-info"><div class="cert-name">Excel Essential Training</div><div class="cert-date">Jul 2024</div><div class="cert-tag">Data</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/excel_essential.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/excel_pivottables.jpg" alt="Excel: PivotTables"><div class="cert-info"><div class="cert-name">Excel: PivotTables</div><div class="cert-date">Sep 2024</div><div class="cert-tag">Data</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/excel_pivottables.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/excel_powerpivot.jpg" alt="Excel: Power Pivot"><div class="cert-info"><div class="cert-name">Excel: Power Pivot</div><div class="cert-date">Oct 2024</div><div class="cert-tag">Data</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/excel_powerpivot.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/excel_online.jpg" alt="Learning Excel Online"><div class="cert-info"><div class="cert-name">Learning Excel Online</div><div class="cert-date">Sep 2024</div><div class="cert-tag">Data</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/excel_online.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/ai_ml.jpg" alt="AI Foundations: Machine Learning"><div class="cert-info"><div class="cert-name">AI Foundations: Machine Learning</div><div class="cert-date">Feb 2026</div><div class="cert-tag">AI</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/ai_ml.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/ai_nn.jpg" alt="AI Foundations: Neural Networks"><div class="cert-info"><div class="cert-name">AI Foundations: Neural Networks</div><div class="cert-date">Feb 2026</div><div class="cert-tag">AI</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/ai_nn.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/prompt_eng.jpg" alt="Prompt Engineering &amp; AI Agents"><div class="cert-info"><div class="cert-name">Prompt Engineering &amp; AI Agents</div><div class="cert-date">Jan 2026</div><div class="cert-tag">AI</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/prompt_eng.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/ops_excellence.jpg" alt="Operational Excellence Foundations"><div class="cert-info"><div class="cert-name">Operational Excellence Foundations</div><div class="cert-date">May 2025</div><div class="cert-tag">Ops</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/ops_excellence.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/six_sigma.jpg" alt="Six Sigma Foundations"><div class="cert-info"><div class="cert-name">Six Sigma Foundations</div><div class="cert-date">Apr 2025</div><div class="cert-tag">Ops</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/six_sigma.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/six_sigma_wb.jpg" alt="Six Sigma: White Belt"><div class="cert-info"><div class="cert-name">Six Sigma: White Belt</div><div class="cert-date">Apr 2025</div><div class="cert-tag">Ops</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/six_sigma_wb.jpg');event.stopPropagation()">View Certificate</button></div></div>
       <div class="cert-card cert-inprog"><div class="cert-info" style="justify-content:center;text-align:center;padding:1.5rem"><div class="cert-name" style="font-style:italic;color:var(--text-muted)">Python Data Structures &amp; Algorithms</div><div class="cert-date">In Progress &mdash; 2026</div></div></div>
     </div>
   </div>
@@ -398,17 +426,17 @@ footer { padding: 1.5rem 4rem; border-top: 1px solid var(--border); display: fle
       <div class="cert-stat"><span class="cert-stat-num">2026</span><span class="cert-stat-label">Latest Year</span></div>
     </div>
     <div class="cert-grid">
-      <div class="cert-card"><img src="certs/coursiv/coursiv_claude.jpg" alt="Master of Claude"><div class="cert-info"><div class="cert-name">Master of Claude</div><div class="cert-date">Feb 2026 &bull; 5 hrs</div><div class="cert-tag">AI</div></div></div>
-      <div class="cert-card"><img src="certs/coursiv/coursiv_chatgpt.jpg" alt="Master of ChatGPT"><div class="cert-info"><div class="cert-name">Master of ChatGPT</div><div class="cert-date">Mar 2026 &bull; 6 hrs</div><div class="cert-tag">AI</div></div></div>
-      <div class="cert-card"><img src="certs/coursiv/coursiv_gemini.jpg" alt="Master of Gemini"><div class="cert-info"><div class="cert-name">Master of Gemini</div><div class="cert-date">Mar 2026 &bull; 4 hrs</div><div class="cert-tag">AI</div></div></div>
-      <div class="cert-card"><img src="certs/coursiv/coursiv_midjourney.jpg" alt="Master of MidJourney"><div class="cert-info"><div class="cert-name">Master of MidJourney</div><div class="cert-date">Feb 2026 &bull; 6 hrs</div><div class="cert-tag">AI</div></div></div>
-      <div class="cert-card"><img src="certs/coursiv/coursiv_ai_pm.jpg" alt="AI Essentials for Project Managers"><div class="cert-info"><div class="cert-name">AI Essentials for Project Managers</div><div class="cert-date">Mar 2026 &bull; 3 hrs</div><div class="cert-tag">AI</div></div></div>
-      <div class="cert-card"><img src="certs/coursiv/coursiv_productivity.jpg" alt="Turbocharge Your Productivity with AI"><div class="cert-info"><div class="cert-name">Turbocharge Your Productivity with AI</div><div class="cert-date">Mar 2026 &bull; 3 hrs</div><div class="cert-tag">AI</div></div></div>
-      <div class="cert-card"><img src="certs/coursiv/coursiv_ai_mastery.jpg" alt="AI Mastery Program"><div class="cert-info"><div class="cert-name">AI Mastery Program</div><div class="cert-date">Mar 2026</div><div class="cert-tag">AI</div></div></div>
-      <div class="cert-card"><img src="certs/coursiv/coursiv_stable_diffusion.jpg" alt="Master of Stable Diffusion"><div class="cert-info"><div class="cert-name">Master of Stable Diffusion</div><div class="cert-date">Apr 2026 &bull; 4 hrs</div><div class="cert-tag">AI</div></div></div>
-      <div class="cert-card"><img src="certs/coursiv/coursiv_veo.jpg" alt="Master of Veo"><div class="cert-info"><div class="cert-name">Master of Veo</div><div class="cert-date">Apr 2026 &bull; 4 hrs</div><div class="cert-tag">AI</div></div></div>
-      <div class="cert-card"><img src="certs/coursiv/coursiv_portfolio_ai.jpg" alt="Build a Strong Portfolio with AI"><div class="cert-info"><div class="cert-name">Build a Strong Portfolio with AI</div><div class="cert-date">May 2026 &bull; 3 hrs</div><div class="cert-tag">AI</div></div></div>
-      <div class="cert-card"><img src="certs/coursiv/coursiv_perplexity.jpg" alt="Master of Perplexity"><div class="cert-info"><div class="cert-name">Master of Perplexity</div><div class="cert-date">May 2026 &bull; 5 hrs</div><div class="cert-tag">AI</div></div></div>
+      <div class="cert-card"><img src="certs/coursiv/coursiv_claude.jpg" alt="Master of Claude"><div class="cert-info"><div class="cert-name">Master of Claude</div><div class="cert-date">Feb 2026 &bull; 5 hrs</div><div class="cert-tag">AI</div><button class="cert-view-btn" onclick="openCertModal('certs/coursiv/coursiv_claude.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/coursiv/coursiv_chatgpt.jpg" alt="Master of ChatGPT"><div class="cert-info"><div class="cert-name">Master of ChatGPT</div><div class="cert-date">Mar 2026 &bull; 6 hrs</div><div class="cert-tag">AI</div><button class="cert-view-btn" onclick="openCertModal('certs/coursiv/coursiv_chatgpt.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/coursiv/coursiv_gemini.jpg" alt="Master of Gemini"><div class="cert-info"><div class="cert-name">Master of Gemini</div><div class="cert-date">Mar 2026 &bull; 4 hrs</div><div class="cert-tag">AI</div><button class="cert-view-btn" onclick="openCertModal('certs/coursiv/coursiv_gemini.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/coursiv/coursiv_midjourney.jpg" alt="Master of MidJourney"><div class="cert-info"><div class="cert-name">Master of MidJourney</div><div class="cert-date">Feb 2026 &bull; 6 hrs</div><div class="cert-tag">AI</div><button class="cert-view-btn" onclick="openCertModal('certs/coursiv/coursiv_midjourney.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/coursiv/coursiv_ai_pm.jpg" alt="AI Essentials for Project Managers"><div class="cert-info"><div class="cert-name">AI Essentials for Project Managers</div><div class="cert-date">Mar 2026 &bull; 3 hrs</div><div class="cert-tag">AI</div><button class="cert-view-btn" onclick="openCertModal('certs/coursiv/coursiv_ai_pm.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/coursiv/coursiv_productivity.jpg" alt="Turbocharge Your Productivity with AI"><div class="cert-info"><div class="cert-name">Turbocharge Your Productivity with AI</div><div class="cert-date">Mar 2026 &bull; 3 hrs</div><div class="cert-tag">AI</div><button class="cert-view-btn" onclick="openCertModal('certs/coursiv/coursiv_productivity.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/coursiv/coursiv_ai_mastery.jpg" alt="AI Mastery Program"><div class="cert-info"><div class="cert-name">AI Mastery Program</div><div class="cert-date">Mar 2026</div><div class="cert-tag">AI</div><button class="cert-view-btn" onclick="openCertModal('certs/coursiv/coursiv_ai_mastery.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/coursiv/coursiv_stable_diffusion.jpg" alt="Master of Stable Diffusion"><div class="cert-info"><div class="cert-name">Master of Stable Diffusion</div><div class="cert-date">Apr 2026 &bull; 4 hrs</div><div class="cert-tag">AI</div><button class="cert-view-btn" onclick="openCertModal('certs/coursiv/coursiv_stable_diffusion.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/coursiv/coursiv_veo.jpg" alt="Master of Veo"><div class="cert-info"><div class="cert-name">Master of Veo</div><div class="cert-date">Apr 2026 &bull; 4 hrs</div><div class="cert-tag">AI</div><button class="cert-view-btn" onclick="openCertModal('certs/coursiv/coursiv_veo.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/coursiv/coursiv_portfolio_ai.jpg" alt="Build a Strong Portfolio with AI"><div class="cert-info"><div class="cert-name">Build a Strong Portfolio with AI</div><div class="cert-date">May 2026 &bull; 3 hrs</div><div class="cert-tag">AI</div><button class="cert-view-btn" onclick="openCertModal('certs/coursiv/coursiv_portfolio_ai.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/coursiv/coursiv_perplexity.jpg" alt="Master of Perplexity"><div class="cert-info"><div class="cert-name">Master of Perplexity</div><div class="cert-date">May 2026 &bull; 5 hrs</div><div class="cert-tag">AI</div><button class="cert-view-btn" onclick="openCertModal('certs/coursiv/coursiv_perplexity.jpg');event.stopPropagation()">View Certificate</button></div></div>
     </div>
   </div>
 </section>
@@ -480,6 +508,30 @@ document.addEventListener("DOMContentLoaded",()=>{
   });
 });
 </script>
+
+<!-- Certificate Modal -->
+<div class="cert-modal-overlay" id="certModal" onclick="closeCertModal()">
+  <div class="cert-modal-inner" onclick="event.stopPropagation()">
+    <button class="cert-modal-close" onclick="closeCertModal()">&#x2715;</button>
+    <img id="certModalImg" src="" alt="Certificate">
+  </div>
+</div>
+<script>
+function openCertModal(src) {
+  document.getElementById('certModalImg').src = src;
+  document.getElementById('certModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeCertModal() {
+  document.getElementById('certModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeCertModal();
+});
+</script>
+
 </body>
 </html>
+
 
