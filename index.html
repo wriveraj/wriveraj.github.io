@@ -76,6 +76,7 @@ section { padding: 6rem 4rem; }
 .project-card { background: var(--bg-2); padding: 2rem; transition: background 0.2s; }
 .project-card:hover { background: var(--bg-3); }
 .project-card.featured { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+.project-card.full-width { grid-column: 1 / -1; }
 .project-number { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em; color: var(--text-muted); margin-bottom: 0.75rem; }
 .project-title { font-family: var(--font-display); font-size: 1.75rem; letter-spacing: 0.02em; line-height: 1.1; margin-bottom: 0.75rem; }
 .project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
@@ -88,8 +89,6 @@ section { padding: 6rem 4rem; }
 .finding-text strong { color: var(--text); font-weight: 500; }
 .project-link { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-top: 1.25rem; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
 .project-link:hover { border-color: var(--accent); }
-.coming-soon { opacity: 0.4; pointer-events: none; }
-.coming-soon-badge { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); border: 1px solid var(--border-hover); padding: 0.2rem 0.5rem; border-radius: 1px; display: inline-block; margin-top: 0.75rem; }
 #experience { border-top: 1px solid var(--border); }
 .experience-list { display: flex; flex-direction: column; max-width: 900px; }
 .exp-item { display: grid; grid-template-columns: 180px 1fr; gap: 3rem; padding: 2rem 0; border-bottom: 1px solid var(--border); }
@@ -333,21 +332,7 @@ footer { padding: 1.5rem 4rem; border-top: 1px solid var(--border); display: fle
       <p class="project-desc">A synthetic dataset and interactive dashboard modeling field inventory KPIs across a 4-territory surgical device operation: PAR compliance, reorder cost exposure, demand variance, and allocation turnaround, with a full DAX measure pack included for Power BI.</p>
       <a href="https://github.com/wriveraj/sap-field-inventory-kpi-dashboard" target="_blank" class="project-link">View on GitHub <span class="project-link-arrow">&rarr;</span></a>
     </div>
-    <div class="project-card coming-soon">
-      <div class="project-number">04</div>
-      <h3 class="project-title">PAR Level Demand Forecasting Model</h3>
-      <div class="project-tags"><span class="tag">PostgreSQL</span><span class="tag">Python</span><span class="tag">Forecasting</span><span class="tag">Supply Chain</span></div>
-      <p class="project-desc">Modeling stockout risk and PAR optimization using historical surgical case demand patterns across a multi-site medical device territory.</p>
-      <div class="coming-soon-badge">In Development</div>
-    </div>
-    <div class="project-card coming-soon">
-      <div class="project-number">05</div>
-      <h3 class="project-title">Cycle Count Reconciliation Analyzer</h3>
-      <div class="project-tags"><span class="tag">PostgreSQL</span><span class="tag">Power BI</span><span class="tag">RCA</span><span class="tag">Inventory Audit</span></div>
-      <p class="project-desc">Automating inventory discrepancy detection and root cause flagging across a multi-site surgical supply network.</p>
-      <div class="coming-soon-badge">In Development</div>
-    </div>
-    <div class="project-card">
+    <div class="project-card full-width">
       <div class="project-number">Side Project</div>
       <h3 class="project-title">Home Repair Tracker</h3>
       <div class="project-tags"><span class="tag">HTML/CSS/JS</span><span class="tag">JSONBin.io</span><span class="tag">Real-Time Sync</span><span class="tag">Data Parsing</span></div>
