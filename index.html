@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>William Rivera Jr - Field Inventory Control Specialist</title>
+<meta name="description" content="William Rivera Jr, Field Inventory Control Specialist &amp; Data Analyst. 13+ years in field inventory, distribution, and supply chain operations, now building the data tools to measure it better.">
+<meta property="og:title" content="William Rivera Jr - Field Inventory Control Specialist &amp; Data Analyst">
+<meta property="og:description" content="13+ years in field inventory, distribution, and supply chain operations, now building the data tools to measure it better.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%23080808'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='14' font-weight='700' fill='%23e8ff47' text-anchor='middle'%3EWR%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Epilogue:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --bg: #080808; --bg-2: #111111; --bg-3: #1a1a1a; --text: #f0ede8; --text-muted: #888880; --accent: #e8ff47; --accent-dim: #b8cc2a; --border: rgba(240,237,232,0.08); --border-hover: rgba(240,237,232,0.2); --font-display: 'Bebas Neue', sans-serif; --font-body: 'Epilogue', sans-serif; --font-mono: 'DM Mono', monospace; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 16px; line-height: 1.7; font-weight: 300; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+a { color: inherit; text-decoration: none; }
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 1rem 4rem; background: rgba(8,8,8,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+.nav-logo { font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.08em; color: var(--text-muted); }
+.nav-logo span { color: var(--accent); }
+.nav-links { display: flex; gap: 2rem; list-style: none; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
+.nav-links a { color: var(--text-muted); transition: color 0.2s; }
+.nav-links a:hover { color: var(--text); }
+.nav-cta { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.5rem 1.25rem; border: 1px solid var(--accent); color: var(--accent); border-radius: 2px; transition: all 0.2s; }
+.nav-cta:hover { background: var(--accent); color: #080808; }
+#hero { min-height: 100vh; display: grid; grid-template-columns: 1fr 420px; gap: 0; padding-top: 60px; }
+.hero-left { display: flex; flex-direction: column; justify-content: center; padding: 4rem 3rem 4rem 4rem; border-right: 1px solid var(--border); }
+.hero-right { display: flex; flex-direction: column; justify-content: center; padding: 4rem 3rem; background: var(--bg-2); gap: 1.5rem; }
+.hero-eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
+.hero-eyebrow::before { content: ''; display: block; width: 30px; height: 1px; background: var(--accent); }
+.hero-name { font-family: var(--font-display); font-size: clamp(3rem, 6vw, 6rem); line-height: 0.95; letter-spacing: 0.02em; margin-bottom: 0.5rem; }
+.hero-title { font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; }
+.hero-divider { width: 40px; height: 1px; background: var(--border-hover); margin-bottom: 1.5rem; }
+.hero-desc { font-size: 15px; color: var(--text-muted); line-height: 1.85; max-width: 480px; margin-bottom: 2.5rem; }
+.hero-desc strong { color: var(--text); font-weight: 500; }
+.hero-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.75rem; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid var(--border-hover); border-radius: 2px; transition: all 0.2s; cursor: pointer; }
+.btn-primary { background: var(--accent); color: #080808; border-color: var(--accent); font-weight: 500; }
+.btn-primary:hover { background: var(--accent-dim); border-color: var(--accent-dim); }
+.btn-secondary { background: transparent; color: var(--text); }
+.btn-secondary:hover { background: var(--bg-3); }
+.stats-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+.stat-box { background: var(--bg-2); padding: 1.25rem; }
+.stat-number { font-family: var(--font-display); font-size: 2.5rem; line-height: 1; color: var(--accent); margin-bottom: 0.25rem; }
+.stat-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+.skills-summary { border: 1px solid var(--border); }
+.skills-summary-header { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
+.skills-summary-list { list-style: none; }
+.skills-summary-list li { font-size: 13px; color: var(--text-muted); padding: 0.5rem 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.75rem; }
+.skills-summary-list li:last-child { border-bottom: none; }
+.skills-summary-list li::before { content: ''; display: block; width: 4px; height: 4px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.skills-summary-list li strong { color: var(--text); font-weight: 500; }
+.availability { display: flex; align-items: center; gap: 0.75rem; font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); letter-spacing: 0.05em; }
+.avail-dot { width: 8px; height: 8px; border-radius: 50%; background: #5fcf80; flex-shrink: 0; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+section { padding: 6rem 4rem; }
+.section-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem; }
+.section-label::after { content: ''; display: block; width: 30px; height: 1px; background: var(--accent); }
+.section-title { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1; letter-spacing: 0.02em; margin-bottom: 2.5rem; }
+#about { border-top: 1px solid var(--border); background: var(--bg-2); }
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; max-width: 1100px; }
+.about-text p { color: var(--text-muted); font-size: 15px; margin-bottom: 1.25rem; line-height: 1.85; }
+.about-text p strong { color: var(--text); font-weight: 500; }
+.about-meta { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+.meta-row { background: var(--bg-2); padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; }
+.meta-key { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.meta-val { font-size: 13px; color: var(--text); font-weight: 500; }
+.meta-val.accent { color: var(--accent); }
+#skills { border-top: 1px solid var(--border); }
+.skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); max-width: 1100px; margin-top: 1.5rem; }
+.skill-group { background: var(--bg); padding: 2rem; }
+.skill-group-title { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+.skill-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+.skill-list li { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 0.75rem; }
+.skill-list li::before { content: ''; display: block; width: 4px; height: 4px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+#projects { border-top: 1px solid var(--border); background: var(--bg-2); }
+.projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); max-width: 1100px; }
+.project-card { background: var(--bg-2); padding: 2rem; transition: background 0.2s; }
+.project-card:hover { background: var(--bg-3); }
+.project-card.featured { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+.project-card.full-width { grid-column: 1 / -1; }
+.project-number { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em; color: var(--text-muted); margin-bottom: 0.75rem; }
+.project-title { font-family: var(--font-display); font-size: 1.75rem; letter-spacing: 0.02em; line-height: 1.1; margin-bottom: 0.75rem; }
+.project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+.tag { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.25rem 0.6rem; border: 1px solid var(--border-hover); color: var(--text-muted); border-radius: 1px; }
+.project-desc { font-size: 13px; color: var(--text-muted); line-height: 1.8; margin-bottom: 1.25rem; }
+.project-findings { display: flex; flex-direction: column; gap: 0.6rem; }
+.finding { display: flex; gap: 0.75rem; align-items: flex-start; font-size: 12px; }
+.finding-num { font-family: var(--font-mono); font-size: 10px; color: var(--accent); padding-top: 2px; flex-shrink: 0; }
+.finding-text { color: var(--text-muted); }
+.finding-text strong { color: var(--text); font-weight: 500; }
+.project-link { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-top: 1.25rem; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
+.project-link:hover { border-color: var(--accent); }
+#experience { border-top: 1px solid var(--border); }
+.experience-list { display: flex; flex-direction: column; max-width: 900px; }
+.exp-item { display: grid; grid-template-columns: 180px 1fr; gap: 3rem; padding: 2rem 0; border-bottom: 1px solid var(--border); }
+.exp-item:last-child { border-bottom: none; }
+.exp-period { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.4rem; }
+.exp-company { font-family: var(--font-mono); font-size: 12px; color: var(--accent); letter-spacing: 0.05em; }
+.exp-role { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.02em; line-height: 1.1; margin-bottom: 0.75rem; }
+.exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+.exp-bullets li { font-size: 13px; color: var(--text-muted); display: flex; gap: 0.75rem; line-height: 1.7; }
+.exp-bullets li::before { content: '---'; color: var(--accent); flex-shrink: 0; }
+#certifications { background: var(--bg-2); border-top: 1px solid var(--border); }
+.cert-stats { display: flex; gap: 1px; background: var(--border); border: 1px solid var(--border); width: fit-content; margin-bottom: 1.5rem; }
+.cert-stat { background: var(--bg-2); padding: 1rem 1.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.2rem; }
+.cert-stat-num { font-family: var(--font-display); font-size: 2rem; line-height: 1; color: var(--accent); }
+.cert-stat-label { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+.cert-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); max-width: 1100px; }
+.cert-card { background: var(--bg-2); display: flex; flex-direction: column; transition: background 0.2s; cursor: zoom-in; }
+.cert-card:hover { background: var(--bg-3); }
+.cert-card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; border-bottom: 1px solid var(--border); opacity: 0.85; transition: opacity 0.2s; }
+.cert-card:hover img { opacity: 1; }
+.cert-info { padding: 0.6rem 0.875rem; display: flex; flex-direction: column; gap: 0.2rem; flex: 1; }
+.cert-name { font-size: 12px; font-weight: 500; color: var(--text); line-height: 1.4; }
+.cert-date { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); }
+.cert-tag { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-top: 0.2rem; }
+.cert-inprog { opacity: 0.5; }
+.cert-secondary { margin-top: 2.5rem; padding-top: 2rem; border-top: 1px dashed var(--border); }
+.cert-secondary-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 1rem; }
+.cert-secondary-label strong { color: var(--text); font-weight: 500; }
+.cert-grid-compact { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); max-width: 1100px; opacity: 0.8; }
+.cert-grid-compact .cert-info { padding: 0.45rem 0.6rem; gap: 0.1rem; }
+.cert-grid-compact .cert-name { font-size: 10px; line-height: 1.3; }
+.cert-grid-compact .cert-date { font-size: 9px; }
+.cert-grid-compact .cert-tag { display: none; }
+.cert-grid-compact .cert-view-btn { margin-top: 0.35rem; font-size: 0.55rem; padding: 0.2rem 0.45rem; }
+#contact { border-top: 1px solid var(--border); }
+.contact-inner { max-width: 700px; }
+.contact-headline { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 4rem); line-height: 1; letter-spacing: 0.02em; margin-bottom: 1.25rem; }
+.contact-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 2.5rem; line-height: 1.8; }
+.contact-links { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); }
+.contact-link { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); transition: background 0.2s; }
+.contact-link:last-child { border-bottom: none; }
+.contact-link:hover { background: var(--bg-3); }
+.contact-link-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); }
+.contact-link-value { font-size: 14px; display: flex; align-items: center; gap: 0.5rem; }
+.contact-link-arrow { color: var(--accent); }
+footer { padding: 1.5rem 4rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.footer-copy { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; color: var(--text-muted); }
+.footer-copy span { color: var(--accent); }
+@media (max-width: 900px) {
+  nav { padding: 1rem 1.5rem; }
+  nav .nav-links { display: none; }
+  #hero { grid-template-columns: 1fr; }
+  .hero-left { padding: 6rem 1.5rem 2rem; border-right: none; border-bottom: 1px solid var(--border); }
+  .hero-right { padding: 2rem 1.5rem; }
+  section { padding: 4rem 1.5rem; }
+  .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .skills-grid { grid-template-columns: 1fr; }
+  .projects-grid { grid-template-columns: 1fr; }
+  .project-card.featured { grid-column: auto; grid-template-columns: 1fr; }
+  .exp-item { grid-template-columns: 1fr; gap: 0.5rem; }
+  .cert-grid { grid-template-columns: repeat(2, 1fr); }
+  .cert-grid-compact { grid-template-columns: repeat(3, 1fr); }
+  footer { padding: 1.5rem; flex-direction: column; gap: 0.75rem; text-align: center; }
+  .stats-panel { grid-template-columns: repeat(2, 1fr); }
+}
+
+.cert-card img { display: none; }
+/* Certificate Modal */
+.cert-modal-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+  z-index: 1000; align-items: center; justify-content: center;
+}
+.cert-modal-overlay.active { display: flex; }
+.cert-modal-inner {
+  position: relative; max-width: 90vw; max-height: 90vh;
+}
+.cert-modal-inner img {
+  max-width: 100%; max-height: 85vh; border-radius: 6px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+}
+.cert-modal-close {
+  position: absolute; top: -14px; right: -14px;
+  background: var(--accent); color: #000; border: none;
+  border-radius: 50%; width: 30px; height: 30px;
+  font-size: 1.1rem; font-weight: 700; cursor: pointer; line-height: 30px; text-align: center;
+}
+.cert-view-btn {
+  margin-top: 0.5rem; background: transparent;
+  border: 1px solid var(--accent); color: var(--accent);
+  font-size: 0.65rem; font-family: var(--font-mono);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0.25rem 0.6rem; border-radius: 3px;
+  cursor: pointer; transition: background 0.2s, color 0.2s;
+}
+.cert-view-btn:hover { background: var(--accent); color: #000; }
+
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">WR<span>.</span>JR</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#certifications">Certifications</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Let's Connect</a>
+</nav>
+
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Field Inventory Control Specialist, Connecticut</div>
+    <div class="hero-name">William<br>Rivera Jr</div>
+    <div class="hero-title">Field Inventory Control Specialist &amp; Data Analyst</div>
+    <div class="hero-divider"></div>
+    <p class="hero-desc">My path to data analytics didn't start with a course. It started with 13+ years managing inventory integrity in the field: cycle counts, allocation planning, lot traceability, account-to-account movements. I transitioned into analytics because I already understood what the data was measuring.<br><br><strong>Now I build the tools to measure it better.</strong></p>
+    <div class="hero-actions">
+      <a href="#projects" class="btn btn-primary">View Projects</a>
+      <a href="#contact" class="btn btn-secondary">Get in Touch</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="availability"><span class="avail-dot"></span>Open to new opportunities</div>
+    <div class="stats-panel">
+      <div class="stat-box"><div class="stat-number">13+</div><div class="stat-label">Years Experience</div></div>
+      <div class="stat-box"><div class="stat-number">4</div><div class="stat-label">Projects Built</div></div>
+      <div class="stat-box"><div class="stat-number">25</div><div class="stat-label">Certifications</div></div>
+      <div class="stat-box"><div class="stat-number">6+</div><div class="stat-label">Tools &amp; Platforms</div></div>
+    </div>
+    <div class="skills-summary">
+      <div class="skills-summary-header">Core Competencies</div>
+      <ul class="skills-summary-list">
+        <li><strong>Data &amp; Analytics:</strong> PostgreSQL, Power BI, Excel</li>
+        <li><strong>Operations:</strong> SAP, Field Inventory, PAR Optimization</li>
+        <li><strong>Methods:</strong> Root Cause Analysis, Six Sigma, Lean</li>
+        <li><strong>Development:</strong> Docker, Python (in progress), HTML/CSS/JS</li>
+        <li><strong>Domain:</strong> Retail Distribution, Supply Chain, Field Inventory</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="section-label">About</div>
+  <div class="section-title">Background</div>
+  <div class="about-grid">
+    <div class="about-text">
+      <p>Over 13+ years in operations, the last 6+ managing field inventory and before that leading quality control in a high-volume distribution center. For me, numbers were never abstract: a single miscount meant the right item wasn't where it needed to be, when it needed to be there.</p>
+      <p>That is the lens I bring to data. I am not just someone who learned SQL and Power BI in a bootcamp. I understand what the data is actually measuring, because I lived inside the operations that generated it.</p>
+      <p>Now I build analytical systems that surface the kind of problems that hide in plain sight: <strong>stockout risks, fulfillment failures, demand patterns that nobody caught until it was too late.</strong></p>
+    </div>
+    <div class="about-meta">
+      <div class="meta-row"><span class="meta-key">Location</span><span class="meta-val">Connecticut</span></div>
+      <div class="meta-row"><span class="meta-key">Current Role</span><span class="meta-val">Field Inventory Control Specialist</span></div>
+      <div class="meta-row"><span class="meta-key">Experience</span><span class="meta-val">13+ Years Operations</span></div>
+      <div class="meta-row"><span class="meta-key">Focus</span><span class="meta-val">Data Analytics Transition</span></div>
+      <div class="meta-row"><span class="meta-key">GitHub</span><span class="meta-val accent">github.com/wriveraj</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="section-label">Skills</div>
+  <div class="section-title">Tools &amp; Technologies</div>
+  <div class="skills-grid">
+    <div class="skill-group">
+      <div class="skill-group-title">Data &amp; Analytics</div>
+      <ul class="skill-list">
+        <li>PostgreSQL &amp; DBeaver</li>
+        <li>Power BI Dashboards</li>
+        <li>Excel &amp; PivotTables</li>
+        <li>Tableau</li>
+        <li>Python (in progress)</li>
+        <li>ETL &amp; Data Transformation</li>
+      </ul>
+    </div>
+    <div class="skill-group">
+      <div class="skill-group-title">Operations &amp; Supply Chain</div>
+      <ul class="skill-list">
+        <li>SAP (Advanced)</li>
+        <li>Field Inventory Management</li>
+        <li>PAR Level Optimization</li>
+        <li>Demand Forecasting</li>
+        <li>Cycle Counting &amp; Auditing</li>
+        <li>KPI Dashboard Development</li>
+      </ul>
+    </div>
+    <div class="skill-group">
+      <div class="skill-group-title">Methods &amp; Frameworks</div>
+      <ul class="skill-list">
+        <li>Root Cause Analysis</li>
+        <li>Six Sigma Foundations</li>
+        <li>Lean Operations</li>
+        <li>Predictive Modeling</li>
+        <li>Cross-functional Collaboration</li>
+        <li>Docker &amp; pgAdmin</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="section-label">Projects</div>
+  <div class="section-title">Selected Work</div>
+  <div class="projects-grid">
+    <div class="project-card featured">
+      <div>
+        <div class="project-number">01 - Featured</div>
+        <h3 class="project-title">Retail Replenishment Audit Simulator</h3>
+        <div class="project-tags">
+          <span class="tag">PostgreSQL</span><span class="tag">DBeaver</span><span class="tag">Docker</span><span class="tag">pgAdmin</span>
+        </div>
+        <p class="project-desc">A 7-table relational database simulating five retail stores replenished from one distribution center. Built to demonstrate inventory auditing, shipment discrepancy detection, PAR-level analysis, and cost exposure reporting.</p>
+        <a href="https://github.com/wriveraj/medical-supply-audit" target="_blank" class="project-link">View on GitHub <span class="project-link-arrow">&rarr;</span></a>
+      </div>
+      <div class="project-findings">
+        <div class="finding"><span class="finding-num">01</span><span class="finding-text"><strong>$59,752</strong> in reorder cost exposure identified across three underperforming stores</span></div>
+        <div class="finding"><span class="finding-num">02</span><span class="finding-text"><strong>33.3% fulfillment rate</strong> at one store, where only 1 in 3 shipments arrived correctly</span></div>
+        <div class="finding"><span class="finding-num">03</span><span class="finding-text"><strong>Data integrity flag:</strong> a mislabeled shipment note masked a shortage that would have delayed reorder</span></div>
+        <div class="finding"><span class="finding-num">04</span><span class="finding-text"><strong>AA Batteries</strong> identified as the highest-cost reorder item at $3,600/store, low at every problem location</span></div>
+        <div class="finding"><span class="finding-num">05</span><span class="finding-text"><strong>One store</strong> had the highest gap cost at $7,784, below PAR on all 15 products</span></div>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-number">02</div>
+      <h3 class="project-title">Store Fixture Deployment Planner</h3>
+      <div class="project-tags">
+        <span class="tag">PostgreSQL</span><span class="tag">Docker</span><span class="tag">Power BI</span><span class="tag">Pre-Allocation</span><span class="tag">HTML Dashboard</span>
+      </div>
+      <p class="project-desc">An 8-table relational database tracking reusable display fixtures as they move from a distribution center to six stores for planned resets, then back for inspection. Includes pre-allocation logic, restock triggers, a 7-day deployment calendar, and an interactive HTML dashboard.</p>
+      <a href="https://github.com/wriveraj/surgical-deployment-planner" target="_blank" class="project-link">View on GitHub <span class="project-link-arrow">&rarr;</span></a>
+    </div>
+    <div class="project-card">
+      <div class="project-number">03</div>
+      <h3 class="project-title">Retail Inventory KPI Dashboard</h3>
+      <div class="project-tags"><span class="tag">Python</span><span class="tag">DAX</span><span class="tag">HTML Dashboard</span><span class="tag">Power BI</span><span class="tag">Retail Data</span></div>
+      <p class="project-desc">A synthetic dataset and interactive dashboard modeling replenishment KPIs across a 4-district, 18-store retail network: PAR compliance, reorder cost exposure, demand variance, and DC-to-store turnaround, with a full DAX measure pack included for Power BI.</p>
+      <a href="https://github.com/wriveraj/sap-field-inventory-kpi-dashboard" target="_blank" class="project-link">View on GitHub <span class="project-link-arrow">&rarr;</span></a>
+    </div>
+    <div class="project-card full-width">
+      <div class="project-number">Side Project</div>
+      <h3 class="project-title">Home Repair Tracker</h3>
+      <div class="project-tags"><span class="tag">HTML/CSS/JS</span><span class="tag">JSONBin.io</span><span class="tag">Real-Time Sync</span><span class="tag">Data Parsing</span></div>
+      <p class="project-desc">A fully interactive repair tracking app built from the repairs identified across the property. Features 40 prioritized repair items with step-by-step DIY guides, materials lists, contractor and permit flags, and real-time cross-device sync.</p>
+      <a href="#contact" class="project-link">Private tool. Demo available on request <span class="project-link-arrow">&rarr;</span></a>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="section-label">Experience</div>
+  <div class="section-title">Where I've Worked</div>
+  <div class="experience-list">
+    <div class="exp-item">
+      <div class="exp-meta">
+        <div class="exp-period">May 2020 to Present</div>
+        <div class="exp-company">Medical Device Manufacturer</div>
+      </div>
+      <div>
+        <div class="exp-role">Surgery Coordinator / Field Inventory Control Specialist</div>
+        <ul class="exp-bullets">
+          <li>Managed end-to-end field inventory lifecycle for surgical implants, ensuring 100% case readiness 3 to 5 business days ahead of procedures</li>
+          <li>Designed SAP-integrated KPI dashboards tracking inventory accuracy, order fulfillment, and demand variance across a multi-state division</li>
+          <li>Maintained inventory accuracy above 98% through comprehensive cycle counts and root cause analysis on recurring variances</li>
+          <li>Extracted and analyzed large operational datasets using SAP, Excel, and Power BI to produce actionable reports for leadership</li>
+        </ul>
+      </div>
+    </div>
+    <div class="exp-item">
+      <div class="exp-meta">
+        <div class="exp-period">Oct 2013 to Mar 2020</div>
+        <div class="exp-company">Dollar Tree Distribution</div>
+      </div>
+      <div>
+        <div class="exp-role">Quality Control Lead</div>
+        <ul class="exp-bullets">
+          <li>Led quality control operations for high-volume distribution centers, overseeing 15+ associates and inbound/outbound inventory accuracy</li>
+          <li>Built and maintained a warehouse database to track inventory movement data, enabling trend analysis and proactive bottleneck identification</li>
+          <li>Leveraged data and analytics to reduce shipment error rates and improve throughput metrics across the facility</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="certifications">
+  <div class="section-label">Certifications</div>
+  <div class="section-title">Professional Development</div>
+  <div id="cert-linkedin">
+    <div class="cert-stats">
+      <div class="cert-stat"><span class="cert-stat-num">14</span><span class="cert-stat-label">Completed</span></div>
+      <div class="cert-stat"><span class="cert-stat-num">1</span><span class="cert-stat-label">In Progress</span></div>
+      <div class="cert-stat"><span class="cert-stat-num">2026</span><span class="cert-stat-label">Latest Year</span></div>
+    </div>
+    <div class="cert-grid">
+      <div class="cert-card"><img src="certs/ll/postgresql_intro.jpg" alt="Introduction to PostgreSQL"><div class="cert-info"><div class="cert-name">Introduction to PostgreSQL</div><div class="cert-date">Aug 2025</div><div class="cert-tag">Data</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/postgresql_intro.jpg');event.stopPropagation()">View Certificate</button></div></div>      <div class="cert-card"><img src="certs/ll/dbeaver.jpg" alt="DBeaver Essential Training"><div class="cert-info"><div class="cert-name">DBeaver Essential Training</div><div class="cert-date">Dec 2025</div><div class="cert-tag">Data</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/dbeaver.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/powerbi_essential.jpg" alt="Power BI Essential Training"><div class="cert-info"><div class="cert-name">Power BI Essential Training</div><div class="cert-date">Jan 2025</div><div class="cert-tag">Data</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/powerbi_essential.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/powerbi_dashboards.jpg" alt="Power BI: Dashboards"><div class="cert-info"><div class="cert-name">Power BI: Dashboards</div><div class="cert-date">Mar 2025</div><div class="cert-tag">Data</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/powerbi_dashboards.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/excel_essential.jpg" alt="Excel Essential Training"><div class="cert-info"><div class="cert-name">Excel Essential Training</div><div class="cert-date">Jul 2024</div><div class="cert-tag">Data</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/excel_essential.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/excel_pivottables.jpg" alt="Excel: PivotTables"><div class="cert-info"><div class="cert-name">Excel: PivotTables</div><div class="cert-date">Sep 2024</div><div class="cert-tag">Data</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/excel_pivottables.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/excel_powerpivot.jpg" alt="Excel: Power Pivot"><div class="cert-info"><div class="cert-name">Excel: Power Pivot</div><div class="cert-date">Oct 2024</div><div class="cert-tag">Data</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/excel_powerpivot.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/excel_online.jpg" alt="Learning Excel Online"><div class="cert-info"><div class="cert-name">Learning Excel Online</div><div class="cert-date">Sep 2024</div><div class="cert-tag">Data</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/excel_online.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/ai_ml.jpg" alt="AI Foundations: Machine Learning"><div class="cert-info"><div class="cert-name">AI Foundations: Machine Learning</div><div class="cert-date">Feb 2026</div><div class="cert-tag">AI</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/ai_ml.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/ai_nn.jpg" alt="AI Foundations: Neural Networks"><div class="cert-info"><div class="cert-name">AI Foundations: Neural Networks</div><div class="cert-date">Feb 2026</div><div class="cert-tag">AI</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/ai_nn.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/prompt_eng.jpg" alt="Prompt Engineering &amp; AI Agents"><div class="cert-info"><div class="cert-name">Prompt Engineering &amp; AI Agents</div><div class="cert-date">Jan 2026</div><div class="cert-tag">AI</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/prompt_eng.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/ops_excellence.jpg" alt="Operational Excellence Foundations"><div class="cert-info"><div class="cert-name">Operational Excellence Foundations</div><div class="cert-date">May 2025</div><div class="cert-tag">Ops</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/ops_excellence.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/six_sigma.jpg" alt="Six Sigma Foundations"><div class="cert-info"><div class="cert-name">Six Sigma Foundations</div><div class="cert-date">Apr 2025</div><div class="cert-tag">Ops</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/six_sigma.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card"><img src="certs/ll/six_sigma_wb.jpg" alt="Six Sigma: White Belt"><div class="cert-info"><div class="cert-name">Six Sigma: White Belt</div><div class="cert-date">Apr 2025</div><div class="cert-tag">Ops</div><button class="cert-view-btn" onclick="openCertModal('certs/ll/six_sigma_wb.jpg');event.stopPropagation()">View Certificate</button></div></div>
+      <div class="cert-card cert-inprog"><div class="cert-info" style="justify-content:center;text-align:center;padding:1.5rem"><div class="cert-name" style="font-style:italic;color:var(--text-muted)">Python Data Structures &amp; Algorithms</div><div class="cert-date">In Progress (2026)</div></div></div>
+    </div>
+  </div>
+  <div class="cert-secondary" id="cert-coursiv">
+    <div class="cert-secondary-label">Also completed: <strong>11 AI tool workshops</strong> via Coursiv (47h total, 2026)</div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-inner">
+    <div class="section-label">Contact</div>
+    <h2 class="contact-headline">Let's Connect</h2>
+    <p class="contact-sub">I'm looking for data analytics work where operational depth matters as much as technical skill. Open to contract and full-time. If that sounds like your team, I'd like to hear from you.</p>
+    <div class="contact-links">
+      <a href="mailto:Riveraw84@outlook.com" class="contact-link">
+        <span class="contact-link-label">Email</span>
+        <span class="contact-link-value">Riveraw84@outlook.com <span class="contact-link-arrow">&rarr;</span></span>
+      </a>
+      <a href="https://linkedin.com/in/william-rivera-966230309" target="_blank" class="contact-link">
+        <span class="contact-link-label">LinkedIn</span>
+        <span class="contact-link-value">william-rivera-966230309 <span class="contact-link-arrow">&rarr;</span></span>
+      </a>
+      <a href="https://github.com/wriveraj" target="_blank" class="contact-link">
+        <span class="contact-link-label">GitHub</span>
+        <span class="contact-link-value">github.com/wriveraj <span class="contact-link-arrow">&rarr;</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-copy">&copy; 2026 William Rivera Jr<span>.</span></div>
+  <div class="footer-copy">Field Inventory Control Specialist, Connecticut</div>
+</footer>
+
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+  document.querySelectorAll(".cert-card img").forEach(i=>{
+    i.style.cursor="zoom-in";
+    i.onclick=function(){
+      var d=document.createElement("div");
+      d.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.93);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:zoom-out";
+      d.onclick=function(){document.body.removeChild(d)};
+      var img=document.createElement("img");
+      img.src=this.src;
+      img.style.cssText="max-width:88%;max-height:88%;border-radius:4px;box-shadow:0 20px 60px rgba(0,0,0,0.8)";
+      img.onclick=function(e){e.stopPropagation()};
+      d.appendChild(img);
+      document.body.appendChild(d);
+    };
+  });
+});
+</script>
+
+<!-- Certificate Modal -->
+<div class="cert-modal-overlay" id="certModal" onclick="closeCertModal()">
+  <div class="cert-modal-inner" onclick="event.stopPropagation()">
+    <button class="cert-modal-close" onclick="closeCertModal()">&#x2715;</button>
+    <img id="certModalImg" src="" alt="Certificate">
+  </div>
+</div>
+<script>
+function openCertModal(src) {
+  document.getElementById('certModalImg').src = src;
+  document.getElementById('certModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeCertModal() {
+  document.getElementById('certModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeCertModal();
+});
+</script>
+
+</body>
+</html>
+
+
+
